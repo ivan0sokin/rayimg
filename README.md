@@ -1,3 +1,7 @@
+![version](https://img.shields.io/crates/v/rayimg)
+![License](https://img.shields.io/crates/l/rayimg)
+![build](https://img.shields.io/appveyor/build/ivan0sokin/rayimg)
+
 # Ray image
 
 ## About
@@ -21,6 +25,10 @@ To run tests type following in the shell
 ```shell
 cargo test
 ```
+
+## Documentation
+
+You can find documentation at [docs.rs](https://docs.rs/rayimg).
 
 ## License
 
