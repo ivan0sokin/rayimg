@@ -1,11 +1,9 @@
-mod id;
-
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-pub use self::id::ID;
-use super::object::Object;
+use crate::id::ID;
+use crate::object::Object;
 
 #[derive(Clone)]
 pub struct Scene<'a> {
@@ -29,7 +27,7 @@ impl<'a> Scene<'a> {
 
     /// Adds object to scene
     /// ```
-    /// # use rayimg::{Scene, shapes::Sphere, Vec3};
+    /// # use rayimg::{Scene, shapes::Sphere, math::Vec3};
     /// let mut test_scene = Scene::new();
     /// test_scene.add_object(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0));
     /// assert_eq!(test_scene.object_count(), 1);
@@ -43,7 +41,7 @@ impl<'a> Scene<'a> {
 
     /// Removes object from scene
     /// ```
-    /// # use rayimg::{Scene, shapes::Sphere, Vec3};
+    /// # use rayimg::{Scene, shapes::Sphere, math::Vec3};
     /// let mut test_scene = Scene::new();
     /// let unit_sphere_id = test_scene.add_object(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0));
     /// assert_eq!(test_scene.object_count(), 1);
@@ -64,7 +62,7 @@ impl<'a> Scene<'a> {
 
     /// Returns count of objects
     /// ```
-    /// # use rayimg::{Scene, shapes::Sphere, Vec3};
+    /// # use rayimg::{Scene, shapes::Sphere, math::Vec3};
     /// let mut test_scene = Scene::new();
     /// let unit_sphere = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0);
     /// test_scene.add_object(unit_sphere.clone());

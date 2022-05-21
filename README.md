@@ -18,6 +18,10 @@ Add following to your ``Cargo.toml``:
 rayimg = "0.0.1"
 ```
 
+## Renders
+
+Rendered images can be found in ``tests/output`` directory.
+
 ## Tests
 
 To run tests type following in the shell

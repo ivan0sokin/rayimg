@@ -3,9 +3,18 @@
 mod scene;
 pub mod shapes;
 mod object;
-mod math;
+pub mod math;
 mod material;
+mod renderer;
+mod image_write;
+mod rgb;
+mod camera;
+mod id;
 
-pub use scene::{Scene, ID};
-pub use object::{Object, Material};
-pub use math::Vec3;
+pub use {camera::Camera,
+         image_write::{ImageWrite, Pixels, P3ImageWriter},
+         object::{Material, Object},
+         renderer::Renderer,
+         rgb::RGB,
+         scene::Scene,
+         id::ID};
