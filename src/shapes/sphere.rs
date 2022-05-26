@@ -1,31 +1,37 @@
-use crate::object::{Object, Material};
-use crate::math::Vec3;
+use crate::{hit::{Hit, HitRecord}, math::{Vec3, Ray}};
 
 #[derive(Clone)]
 pub struct Sphere<T> {
-    pub center: Vec3<T>,
-    pub radius: T,
+    center: Vec3<T>,
+    radius: T,
     // material: Box<dyn Material + 'a>
 }
 
-impl<T> Sphere<T> {
+impl<T: Copy> Sphere<T> {
     /// Creates new Sphere with given center, radius and material
     /// ```
     /// # use rayimg::{shapes::Sphere, math::Vec3};
     /// let unit_sphere = Sphere::new(Vec3::new(1.0, 3.0, 2.0), 1.0);
-    /// assert!(unit_sphere.center == Vec3::new(1.0, 3.0, 2.0) && unit_sphere.radius == 1.0);
+    /// assert!(unit_sphere.center() == Vec3::new(1.0, 3.0, 2.0) && unit_sphere.radius() == 1.0);
     /// ```
     pub fn new(center: Vec3<T>, radius: T) -> Self {
         Self {
             center,
-            radius,
-            // material: Box::new(PhantomData::default())
+            radius
         }
+    }
+
+    pub fn center(&self) -> Vec3<T> {
+        self.center.clone()
+    }
+
+    pub fn radius(&self) -> T {
+        self.radius
     }
 }
 
-impl<T> Object for Sphere<T> {
-    /*fn get_material(&self) -> &dyn Material {
-        *self.material
-    }*/
+impl<T> Hit<T> for Sphere<T> {
+    fn hit(&self, ray: &Ray<T>, t_min: T, t_max: T) -> Option<HitRecord<T>> {
+        todo!()
+    }
 }

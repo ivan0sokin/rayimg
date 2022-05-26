@@ -1,12 +1,7 @@
-mod p3_image_writer;
+mod image_write;
 mod pixels;
+mod p3_image_writer;
 
+pub use image_write::ImageWrite;
 pub use p3_image_writer::P3ImageWriter;
 pub use pixels::Pixels;
-
-pub trait ImageWrite<C> {
-    fn write_header(&mut self);
-    fn write_color(&mut self, color: &C);
-    fn bounds(&self) -> (usize, usize);
-    fn pixels(&self) -> Pixels;
-}

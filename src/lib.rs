@@ -2,19 +2,17 @@
 
 mod scene;
 pub mod shapes;
-mod object;
+mod hit;
 pub mod math;
 mod material;
 mod renderer;
 mod image_write;
 mod rgb;
 mod camera;
-mod id;
 
 pub use {camera::Camera,
          image_write::{ImageWrite, Pixels, P3ImageWriter},
-         object::{Material, Object},
+         hit::{Hit, HitRecord},
          renderer::Renderer,
          rgb::RGB,
-         scene::Scene,
-         id::ID};
+         scene::Scene};

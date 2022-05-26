@@ -3,8 +3,8 @@ use super::vec3::Vec3;
 use std::ops::{Add, Sub, Mul, Div};
 
 pub struct Ray<T> {
-    pub origin: Vec3<T>,
-    pub direction: Vec3<T>
+    origin: Vec3<T>,
+    direction: Vec3<T>
 }
 
 impl<T> Ray<T>
@@ -14,6 +14,14 @@ impl<T> Ray<T>
             origin,
             direction
         }
+    }
+
+    pub fn origin(&self) -> Vec3<T> {
+        self.origin.clone()
+    }
+
+    pub fn direction(&self) -> Vec3<T> {
+        self.direction.clone()
     }
 
     pub fn trace(&self, t: T) -> Vec3<T> {
