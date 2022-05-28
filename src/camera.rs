@@ -25,35 +25,59 @@ impl<T: Copy> Camera<T>
         }
     }
 
+    /// Returns position of camera
+    /// ```
+    /// # use rayimg::{Camera, math::Vec3};
+    /// let camera = Camera::new(Vec3::new(-2.0, 1.0, 4.0), (16.0, 9.0), 1.0);
+    /// assert_eq!(camera.position(), Vec3::new(-2.0, 1.0, 4.0));
+    /// ```
     pub fn position(&self) -> Vec3<T> {
         self.position.clone()
     }
 
+    /// Returns camera viewport
+    /// ```
+    /// # use rayimg::{Camera, math::Vec3};
+    /// let camera = Camera::new(Vec3::new(-2.0, 1.0, 4.0), (16.0, 9.0), 1.0);
+    /// assert_eq!(camera.viewport(), (16.0, 9.0));
+    /// ```
     pub fn viewport(&self) -> (T, T) {
         self.viewport.clone()
     }
 
+    /// Returns focal length of camera
+    /// ```
+    /// # use rayimg::{Camera, math::Vec3};
+    /// let camera = Camera::new(Vec3::new(-2.0, 1.0, 4.0), (16.0, 9.0), 1.0);
+    /// assert_eq!(camera.focal_len(), 1.0);
+    /// ```
     pub fn focal_len(&self) -> T {
         self.focal_len
     }
 
+    /// Returns ray to camera viewport
+    /// ```
+    /// # use rayimg::{Camera, math::{Vec3, Ray}};
+    /// let camera = Camera::new(Vec3::new(-2.0, 1.0, 4.0), (16.0, 9.0), 1.0);
+    /// assert_eq!(camera.ray_to_viewport(0.5, 0.5), Ray::new(Vec3::new(-2.0, 1.0, 4.0), Vec3::new(0.0, 0.0, -1.0)));
+    /// ```
     pub fn ray_to_viewport(&self, h: T, v: T) -> Ray<T> {
         Ray::new(self.position(), self.lower_left_corner() + self.horizontal() * h + self.vertical() * v - self.position()) 
     }
 
-    pub fn lower_left_corner(&self) -> Vec3<T> {
+    fn lower_left_corner(&self) -> Vec3<T> {
         self.position() - self.horizontal().half() - self.vertical().half() - self.frontal()
     }
 
-    pub fn horizontal(&self) -> Vec3<T> {
+    fn horizontal(&self) -> Vec3<T> {
         Vec3::new(self.viewport.0, 0.0.into(), 0.0.into())
     }
 
-    pub fn vertical(&self) -> Vec3<T> {
+    fn vertical(&self) -> Vec3<T> {
         Vec3::new(0.0.into(), self.viewport.1, 0.0.into())
     }
 
-    pub fn frontal(&self) -> Vec3<T> {
+    fn frontal(&self) -> Vec3<T> {
         Vec3::new(0.0.into(), 0.0.into(), self.focal_len)
     }
 }

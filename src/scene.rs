@@ -1,6 +1,6 @@
-use std::rc::Rc;
-
 use crate::{math::Ray, hit::{Hit, HitRecord}};
+
+use std::{rc::Rc, ops::{Add, Sub, Mul, Div, Neg}};
 
 #[derive(Clone)]
 pub struct Scene<'a, T> {
@@ -22,9 +22,10 @@ impl<'a, T> Scene<'a, T> {
 
     /// Adds object to scene
     /// ```
-    /// # use rayimg::{Scene, shapes::Sphere, math::Vec3};
+    /// # use rayimg::{Scene, shapes::Sphere, math::Vec3, materials::Lambertian};
+    /// # use std::rc::Rc;
     /// let mut test_scene = Scene::new();
-    /// test_scene.add_object(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0));
+    /// test_scene.add_object(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0, Rc::new(Lambertian::default())));
     /// assert_eq!(test_scene.object_count(), 1);
     /// ```
     pub fn add_object(&mut self, object: impl Hit<T> + 'a) {
@@ -33,9 +34,10 @@ impl<'a, T> Scene<'a, T> {
 
     /// Returns count of objects
     /// ```
-    /// # use rayimg::{Scene, shapes::Sphere, math::Vec3};
+    /// # use rayimg::{Scene, shapes::Sphere, math::Vec3, materials::Lambertian};
+    /// # use std::rc::Rc;
     /// let mut test_scene = Scene::new();
-    /// let unit_sphere = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0);
+    /// let unit_sphere = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0, Rc::new(Lambertian::default()));
     /// test_scene.add_object(unit_sphere.clone());
     /// test_scene.add_object(unit_sphere.clone());
     /// test_scene.add_object(unit_sphere.clone());
@@ -46,7 +48,8 @@ impl<'a, T> Scene<'a, T> {
     }
 }
 
-impl<'a, T: Copy + PartialOrd> Hit<T> for Scene<'a, T> {
+impl<'a, T> Hit<T> for Scene<'a, T>
+    where T: Copy + PartialOrd + Default + Neg + Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T> + Neg<Output = T> + From<f64> + Into<f64> {
     fn hit(&self, ray: &Ray<T>, t_min: T, mut t_max: T) -> Option<HitRecord<T>> {
         let mut hit_record = None;
         for object in &self.objects {

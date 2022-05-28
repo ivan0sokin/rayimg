@@ -1,7 +1,7 @@
 mod configuration;
 use configuration::*;
 
-use rayimg::{Scene, Renderer, P3ImageWriter, math::{Vec3, Ray}, RGB};
+use rayimg::{Scene, Renderer, P3ImageWriter, math::Vec3, RGB};
 
 #[test]
 fn create_sky_image() {

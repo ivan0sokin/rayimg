@@ -1,37 +1,78 @@
-use crate::{hit::{Hit, HitRecord}, math::{Vec3, Ray}};
+use crate::{hit::{Hit, HitRecord}, math::{Vec3, Ray}, scatter::Scatter};
+
+use std::{ops::{Add, Sub, Mul, Div, Neg}, rc::Rc};
 
 #[derive(Clone)]
 pub struct Sphere<T> {
     center: Vec3<T>,
     radius: T,
-    // material: Box<dyn Material + 'a>
+    material: Rc<dyn Scatter<T>>
 }
 
 impl<T: Copy> Sphere<T> {
-    /// Creates new Sphere with given center, radius and material
+    /// Creates new Sphere with given center, radius and materials
     /// ```
-    /// # use rayimg::{shapes::Sphere, math::Vec3};
-    /// let unit_sphere = Sphere::new(Vec3::new(1.0, 3.0, 2.0), 1.0);
+    /// # use rayimg::{shapes::Sphere, math::Vec3, materials::Lambertian};
+    /// # use std::rc::Rc;
+    /// let unit_sphere = Sphere::new(Vec3::new(1.0, 3.0, 2.0), 1.0, Rc::new(Lambertian::default()));
     /// assert!(unit_sphere.center() == Vec3::new(1.0, 3.0, 2.0) && unit_sphere.radius() == 1.0);
     /// ```
-    pub fn new(center: Vec3<T>, radius: T) -> Self {
+    pub fn new(center: Vec3<T>, radius: T, material: Rc<dyn Scatter<T>>) -> Self {
         Self {
             center,
-            radius
+            radius,
+            material
         }
     }
 
+    /// Returns center of Sphere
+    /// ```
+    /// # use rayimg::{shapes::Sphere, math::Vec3, materials::Lambertian};
+    /// # use std::rc::Rc;
+    /// let unit_sphere = Sphere::new(Vec3::new(4.0, -3.0, 1.0), 1.0, Rc::new(Lambertian::default()));
+    /// assert_eq!(unit_sphere.center(), Vec3::new(4.0, -3.0, 1.0));
+    /// ```
     pub fn center(&self) -> Vec3<T> {
         self.center.clone()
     }
 
+    /// Returns radius of Sphere
+    /// ```
+    /// # use rayimg::{shapes::Sphere, math::Vec3, materials::Lambertian};
+    /// # use std::rc::Rc;
+    /// let unit_sphere = Sphere::new(Vec3::new(4.0, -3.0, 1.0), 1.0, Rc::new(Lambertian::default()));
+    /// assert_eq!(unit_sphere.radius(), 1.0);
+    /// ```
     pub fn radius(&self) -> T {
         self.radius
     }
 }
 
-impl<T> Hit<T> for Sphere<T> {
+impl<T> Hit<T> for Sphere<T>
+    where T: Copy + PartialOrd + Default + Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T> + Neg<Output = T> + From<f64> + Into<f64> {
     fn hit(&self, ray: &Ray<T>, t_min: T, t_max: T) -> Option<HitRecord<T>> {
-        todo!()
+        let center_to_origin = ray.origin() - self.center();
+        let (a, k, c) = (ray.direction().squared_magnitude(), center_to_origin.dot(&ray.direction()), center_to_origin.squared_magnitude() - self.radius * self.radius);
+        let discriminant = k * k - a * c;
+
+        if discriminant < T::default() {
+            return None;
+        }
+
+        let sqrt_d = discriminant.into().sqrt().into();
+        let roots = ((-k - sqrt_d) / a, (-k + sqrt_d) / a);
+        let mut t = roots.0;
+        if t < t_min || t_max < t {
+            t = roots.1;
+            if t < t_min || t_max < t {
+                return None;
+            }
+        }
+
+        let point = ray.trace(t);
+        let mut hit_record = HitRecord::new(t, point.clone(),self.material.clone());
+        let normal = (point - self.center()).normalize();
+        hit_record.set_face_normal(ray, normal);
+        Some(hit_record)
     }
 }

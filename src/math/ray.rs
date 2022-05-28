@@ -2,6 +2,7 @@ use super::vec3::Vec3;
 
 use std::ops::{Add, Sub, Mul, Div};
 
+#[derive(Debug, Default, Clone, Eq, PartialEq)]
 pub struct Ray<T> {
     origin: Vec3<T>,
     direction: Vec3<T>

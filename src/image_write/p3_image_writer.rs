@@ -34,7 +34,7 @@ impl<W: Write> ImageWrite<RGB<u8>> for P3ImageWriter<W> {
     }
 
     fn write_color(&mut self, color: &RGB<u8>) {
-        write!(self.w, "{} {} {}\n", color.r, color.g, color.b).unwrap();
+        write!(self.w, "{} {} {}\n", color.r(), color.g(), color.b()).unwrap();
     }
 
     fn bounds(&self) -> (usize, usize) {

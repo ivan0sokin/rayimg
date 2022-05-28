@@ -15,7 +15,7 @@ Add following to your ``Cargo.toml``:
 
 ```toml
 [dependencies]
-rayimg = "0.0.2"
+rayimg = "0.0.3"
 ```
 
 ## Renders
@@ -33,6 +33,10 @@ cargo test
 ## Documentation
 
 You can find documentation at [docs.rs](https://docs.rs/rayimg).
+
+## Dependencies
+
+**[Rand](https://github.com/rust-random/rand)**
 
 ## License
 

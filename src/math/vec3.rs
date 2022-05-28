@@ -1,4 +1,4 @@
-use std::ops::{Add, Sub, Mul, Div};
+use std::ops::{Add, Sub, Mul, Div, Neg};
 
 #[derive(Debug, Default, Clone, Eq, PartialEq)]
 pub struct Vec3<T> {
@@ -20,6 +20,14 @@ impl<T> Vec3<T>
             x,
             y,
             z
+        }
+    }
+
+    pub fn random() -> Self {
+        Self {
+            x: rand::random::<f64>().into(),
+            y: rand::random::<f64>().into(),
+            z: rand::random::<f64>().into()
         }
     }
 
@@ -122,6 +130,18 @@ impl<T> Div<T> for Vec3<T>
     fn div(self, scalar: T) -> Self::Output {
         let one_over_scalar = T::from(1.0) / scalar;
         Vec3::new(self.x * one_over_scalar, self.y * one_over_scalar, self.z * one_over_scalar)
+    }
+}
+
+impl<T: Neg<Output = T>> Neg for Vec3<T> {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z
+        }
     }
 }
 
