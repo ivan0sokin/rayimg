@@ -1,7 +1,7 @@
 [package]
 name = "rayimg"
 authors = ["ivan0sokin"]
-version = "0.0.4"
+version = "0.0.3"
 edition = "2021"
 description = "Renders image of some scene using ray tracing."
 license = "MIT OR Apache-2.0"
