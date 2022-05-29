@@ -10,6 +10,7 @@ mod image_write;
 mod rgb;
 mod camera;
 pub mod shapes;
+mod random;
 
 pub use {camera::Camera,
          image_write::{ImageWrite, Pixels, P3ImageWriter},

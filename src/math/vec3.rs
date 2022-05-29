@@ -1,9 +1,8 @@
 use std::ops::{Add, Sub, Mul, Div, Neg, AddAssign, SubAssign, MulAssign, DivAssign};
 
-use rand::distributions::Standard;
-use rand::prelude::Distribution;
+use rand::{distributions::Standard, prelude::Distribution};
 
-use crate::rgb::RGB;
+use crate::{rgb::RGB, random::random_in_range};
 
 #[derive(Debug, Default, Clone, Eq, PartialEq)]
 pub struct Vec3<T> {
@@ -76,12 +75,28 @@ impl<T> Vec3<T>
     }
 }
 
-impl<T> Vec3<T> where Standard: Distribution<T> {
+impl<T> Vec3<T>
+    where T: Copy + Into<f64> + PartialOrd {
+    pub fn near_epsilon(&self, epsilon: T) -> bool {
+        let epsilon = epsilon.into();
+        self.x.into().abs() < epsilon && self.y.into().abs() < epsilon && self.z.into().abs() < epsilon
+    }
+}
+
+impl<T> Vec3<T> where T: From<f64>, Standard: Distribution<T> {
+    /// Returns random Vec3&lt;T&gt; with coordinates in range [-1.0..1.0]
+    /// ```
+    /// # use rayimg::math::Vec3;
+    /// let vector = Vec3::random();
+    /// assert!(-1.0 <= vector.x && vector.x <= 1.0);
+    /// assert!(-1.0 <= vector.y && vector.y <= 1.0);
+    /// assert!(-1.0 <= vector.z && vector.z <= 1.0);
+    /// ```
     pub fn random() -> Self {
         Self {
-            x: rand::random(),
-            y: rand::random(),
-            z: rand::random()
+            x: random_in_range(-1.0..=1.0).into(),
+            y: random_in_range(-1.0..=1.0).into(),
+            z: random_in_range(-1.0..=1.0).into()
         }
     }
 }

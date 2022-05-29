@@ -1,6 +1,4 @@
-use crate::{scene::Scene, image_write::ImageWrite, rgb::RGB, camera::Camera, math::Ray, hit::Hit};
-
-use rand::Rng;
+use crate::{scene::Scene, image_write::ImageWrite, rgb::RGB, camera::Camera, math::Ray, hit::Hit, random::random_in_range};
 
 pub type RayMiss<'a> = dyn Fn(&Ray) -> RGB + 'a;
 
@@ -11,7 +9,7 @@ pub struct Renderer<'a> {
 }
 
 impl<'a> Renderer<'a> {
-    const DEPTH: isize = 125;
+    const DEPTH: usize = 125;
 
     pub fn new(scene: Scene<'a>, camera: Camera, ray_miss: impl Fn(&Ray) -> RGB + 'a) -> Self {
         Self {
@@ -30,7 +28,7 @@ impl<'a> Renderer<'a> {
             let mut color = RGB::default();
             let samples = 100;
             for _ in 0..samples {
-                let (r1, r2) = (rand::thread_rng().gen::<f64>(), rand::thread_rng().gen::<f64>());
+                let (r1, r2) = (random_in_range(-1.0..1.0), random_in_range(-1.0..1.0));
                 let offset = ((pixel.0 as f64 + r1) / bounds.0 as f64, (pixel.1 as f64 + r2) / bounds.1 as f64);
                 let ray = self.camera.ray_to_viewport(&offset);
                 color += self.ray_color(&ray, Self::DEPTH);
@@ -52,8 +50,8 @@ impl<'a> Renderer<'a> {
         }
     }
 
-    fn ray_color(&self, ray: &Ray, depth: isize) -> RGB {
-        if depth <= 0 {
+    fn ray_color(&self, ray: &Ray, depth: usize) -> RGB {
+        if depth == 0 {
             return RGB::default();
         }
 

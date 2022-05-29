@@ -10,7 +10,7 @@ fn create_red_sphere() {
     let mut sky = Scene::new();
     let red_sphere = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, Rc::new(Lambertian::new(RGB(1.0, 0.0, 0.0))));
     sky.add_object(red_sphere);
-    let renderer = Renderer::new(sky, get_camera(), |r| {
+    let renderer = Renderer::new(sky, get_camera(), |_| {
         RGB(1.0, 1.0, 1.0)
     });
 

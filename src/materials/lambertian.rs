@@ -15,11 +15,8 @@ impl Lambertian {
 
 impl Scatter for Lambertian {
     fn scatter(&self, _: &Ray, hit_record: &HitRecord) -> Option<(Ray, RGB)> {
-        let random_unit_vector = Vec3::random().normalize();
-        let mut scatter_direction = hit_record.normal() + random_unit_vector;
-
-        let s = 1e-8;
-        if scatter_direction.x < s && scatter_direction.y < s && scatter_direction.z < s {
+        let mut scatter_direction = hit_record.normal() + Vec3::random().normalize();
+        if scatter_direction.near_epsilon(1e-8) {
             scatter_direction = hit_record.normal();
         }
 
