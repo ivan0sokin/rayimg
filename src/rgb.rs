@@ -1,74 +1,60 @@
-use crate::{scatter::Scatter, math::Ray, hit::HitRecord};
+use std::ops::{Add, Sub, Mul, Div, Neg, AddAssign, SubAssign, MulAssign};
 
-use std::ops::{Add, Sub, Mul, Div, Neg, AddAssign};
+/// Color structure with components in interval from 0.0 to 1.0.
+/// ```
+/// use rayimg::RGB;
+///
+/// let light_green = RGB(0.0, 1.0, 0.5);
+/// let brown = RGB::new(0.39, 0.26, 0.13);
+///
+/// assert_eq!(light_green.as_bytes(), [0, 255, 128]);
+/// assert_eq!(brown.as_bytes(), [99, 66, 33]);
+/// ```
+#[derive(Default, Clone, PartialEq)]
+pub struct RGB(pub f64, pub f64, pub f64);
 
-#[derive(Default, Clone, Eq, PartialEq)]
-pub struct RGB<T>(pub T, pub T, pub T);
+impl RGB {
+    const ALMOST_BYTE_MAX_PLUS_ONE: f64 = 256.0 - f64::EPSILON;
 
-impl<T: Copy> RGB<T> {
-    /// Creates new RGB&lt;T&gt;
+    /// Creates new RGB
     /// ```
     /// # use rayimg::RGB;
     /// let light_green = RGB::new(0.0, 1.0, 0.5);
     /// assert!(light_green.r() == 0.0 && light_green.g() == 1.0 && light_green.b() == 0.5);
     /// ```
-    pub fn new(r: T, g: T, b: T) -> Self {
+    pub fn new(r: f64, g: f64, b: f64) -> Self {
         RGB(r, g, b)
     }
 
-    /// Returns red component of RGB&lt;T&gt;
+    /// Returns red component of RGB&lt;f64&gt;
     /// ```
     /// # use rayimg::RGB;
     /// let brown = RGB::new(0.39, 0.26, 0.13);
     /// assert_eq!(brown.r(), 0.39);
     /// ```
-    pub fn r(&self) -> T {
+    pub fn r(&self) -> f64 {
         self.0
     }
 
-    /// Returns green component of RGB&lt;T&gt;
+    /// Returns green component of RGB&lt;f64&gt;
     /// ```
     /// # use rayimg::RGB;
     /// let brown = RGB::new(0.39, 0.26, 0.13);
     /// assert_eq!(brown.g(), 0.26);
     /// ```
-    pub fn g(&self) -> T {
+    pub fn g(&self) -> f64 {
         self.1
     }
 
-    /// Returns blue component of RGB&lt;T&gt;
+    /// Returns blue component of RGB&lt;f64&gt;
     /// ```
     /// # use rayimg::RGB;
     /// let brown = RGB::new(0.39, 0.26, 0.13);
     /// assert_eq!(brown.b(), 0.13);
     /// ```
-    pub fn b(&self) -> T {
+    pub fn b(&self) -> f64 {
         self.2
     }
-
-    /// Creates new RGB&lt;T&gt; from slice of 3 elements
-    /// ```
-    /// # use rayimg::RGB;
-    /// let light_green = RGB::from_slice(&[0.0, 1.0, 0.5]);
-    /// assert!(light_green.r() == 0.0 && light_green.g() == 1.0 && light_green.b() == 0.5);
-    /// ```
-    pub fn from_slice(slice: &[T; 3]) -> Self {
-        RGB(slice[0], slice[1], slice[2])
-    }
-
-    /// Creates slice of 3 components
-    /// ```
-    /// # use rayimg::RGB;
-    /// let light_green = RGB::new(0.0, 1.0, 0.5);
-    /// assert_eq!(light_green.as_slice(), [0.0, 1.0, 0.5]);
-    /// ```
-    pub fn as_slice(&self) -> [T; 3] {
-        [self.0, self.1, self.2]
-    }
-}
-
-impl<T: Copy + Into<f64>> RGB<T> {
-    const ALMOST_MAX: f64 = 256.0 - f64::EPSILON;
 
     /// Return slice of 3 elements converted from 0.0..1.0 interval to 0..255
     /// ```
@@ -77,30 +63,92 @@ impl<T: Copy + Into<f64>> RGB<T> {
     /// assert_eq!(light_green.as_bytes(), [255, 255, 128]);
     /// ```
     pub fn as_bytes(&self) -> [u8; 3] {
-        [(self.0.into() * Self::ALMOST_MAX) as u8, (self.1.into() * Self::ALMOST_MAX) as u8, (self.2.into() * Self::ALMOST_MAX) as u8]
+        [(self.0 * Self::ALMOST_BYTE_MAX_PLUS_ONE) as u8, (self.1 * Self::ALMOST_BYTE_MAX_PLUS_ONE) as u8, (self.2 * Self::ALMOST_BYTE_MAX_PLUS_ONE) as u8]
     }
 }
 
-impl<T: Mul<Output = T> + Copy> Mul<T> for RGB<T> {
-    type Output = RGB<T>;
+impl Add<f64> for RGB {
+    type Output = Self;
 
-    fn mul(self, rhs: T) -> Self::Output {
-        RGB(self.0 * rhs, self.1 * rhs, self.2 * rhs)
+    fn add(self, scalar: f64) -> Self::Output {
+        Self(self.0 + scalar, self.1 + scalar, self.2 + scalar)
     }
 }
 
-impl<T: Mul<Output = T>> Mul<RGB<T>> for RGB<T> {
-    type Output = RGB<T>;
+impl Sub<f64> for RGB {
+    type Output = Self;
+
+    fn sub(self, scalar: f64) -> Self::Output {
+        self + (-scalar)
+    }
+}
+
+impl Mul<f64> for RGB {
+    type Output = Self;
+
+    fn mul(self, scalar: f64) -> Self::Output {
+        Self(self.0 * scalar, self.1 * scalar, self.2 * scalar)
+    }
+}
+
+impl Div<f64> for RGB {
+    type Output = Self;
+
+    fn div(self, scalar: f64) -> Self::Output {
+        self * (1.0 / scalar)
+    }
+}
+
+impl Add<RGB> for RGB {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self(self.0 + rhs.0, self.1 + rhs.1, self.2 + rhs.2)
+    }
+}
+
+impl Sub<RGB> for RGB {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        self + (-rhs)
+    }
+}
+
+impl Mul<RGB> for RGB {
+    type Output = Self;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        RGB(self.0 * rhs.0, self.1 * rhs.1, self.2 * rhs.2)
+        Self(self.0 * rhs.0, self.1 * rhs.1, self.2 * rhs.2)
     }
 }
 
-impl<T: AddAssign> AddAssign<RGB<T>> for RGB<T> {
+impl Neg for RGB {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self(-self.0, -self.1, -self.2)
+    }
+}
+
+impl AddAssign<RGB> for RGB {
     fn add_assign(&mut self, rhs: Self) {
         self.0 += rhs.0;
         self.1 += rhs.1;
         self.2 += rhs.2;
+    }
+}
+
+impl SubAssign<RGB> for RGB {
+    fn sub_assign(&mut self, rhs: Self) {
+        *self += -rhs;
+    }
+}
+
+impl MulAssign<RGB> for RGB {
+    fn mul_assign(&mut self, rhs: Self) {
+        self.0 *= rhs.0;
+        self.1 *= rhs.1;
+        self.2 *= rhs.2;
     }
 }

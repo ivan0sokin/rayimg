@@ -1,6 +1,6 @@
 use crate::math::Ray;
 use super::hit_record::HitRecord;
 
-pub trait Hit<T> {
-    fn hit(&self, ray: &Ray<T>, t_min: T, t_max: T) -> Option<HitRecord<T>>;
+pub trait Hit {
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
 }

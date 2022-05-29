@@ -1,17 +1,28 @@
 use crate::{math::Ray, hit::{Hit, HitRecord}};
 
-use std::{rc::Rc, ops::{Add, Sub, Mul, Div, Neg}};
+use std::rc::Rc;
 
+/// Scene contains information about hittable objects. It's also hittable.
+/// ```
+/// use rayimg::{Scene, shapes::Sphere, materials::Lambertian, math::{Vec3, Ray}, RGB, Hit, HitRecord};
+/// use std::rc::Rc;
+///
+/// let mut scene = Scene::new();
+/// scene.add_object(Sphere::new(Vec3::new(1.0, 2.0, 3.0), 1.0, Rc::new(Lambertian::new(RGB(1.0, 0.0, 0.0)))));
+///
+/// assert_eq!(scene.object_count(), 1);
+/// assert!(scene.hit(&Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, -1.0)), 0.0, f64::MAX).is_none());
+/// ```
 #[derive(Clone)]
-pub struct Scene<'a, T> {
-    objects: Vec<Rc<dyn Hit<T> + 'a>>
+pub struct Scene<'a> {
+    objects: Vec<Rc<dyn Hit + 'a>>
 }
 
-impl<'a, T> Scene<'a, T> {
+impl<'a> Scene<'a> {
     /// Creates empty Scene
     /// ```
     /// # use rayimg::Scene;
-    /// let test_scene = Scene::<f64>::new();
+    /// let test_scene = Scene::new();
     /// assert_eq!(test_scene.object_count(), 0);
     /// ```
     pub fn new() -> Self {
@@ -28,7 +39,7 @@ impl<'a, T> Scene<'a, T> {
     /// test_scene.add_object(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0, Rc::new(Lambertian::default())));
     /// assert_eq!(test_scene.object_count(), 1);
     /// ```
-    pub fn add_object(&mut self, object: impl Hit<T> + 'a) {
+    pub fn add_object(&mut self, object: impl Hit + 'a) {
         self.objects.push(Rc::new(object));
     }
 
@@ -48,9 +59,8 @@ impl<'a, T> Scene<'a, T> {
     }
 }
 
-impl<'a, T> Hit<T> for Scene<'a, T>
-    where T: Copy + PartialOrd + Default + Neg + Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T> + Neg<Output = T> + From<f64> + Into<f64> {
-    fn hit(&self, ray: &Ray<T>, t_min: T, mut t_max: T) -> Option<HitRecord<T>> {
+impl<'a> Hit for Scene<'a> {
+    fn hit(&self, ray: &Ray, t_min: f64, mut t_max: f64) -> Option<HitRecord> {
         let mut hit_record = None;
         for object in &self.objects {
             if let Some(temp_hit_record) = object.hit(ray, t_min, t_max) {

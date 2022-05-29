@@ -11,6 +11,6 @@ pub fn get_position() -> Vec3<f64> {
     Vec3::new(0.0, 0.0, 0.0)
 }
 
-pub fn get_camera() -> Camera<f64> {
+pub fn get_camera() -> Camera {
     Camera::new(get_position(), VIEWPORT, FOCAL_LENGTH)
 }

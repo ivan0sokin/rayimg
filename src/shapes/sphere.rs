@@ -1,15 +1,15 @@
 use crate::{hit::{Hit, HitRecord}, math::{Vec3, Ray}, scatter::Scatter};
 
-use std::{ops::{Add, Sub, Mul, Div, Neg}, rc::Rc};
+use std::rc::Rc;
 
 #[derive(Clone)]
-pub struct Sphere<T> {
-    center: Vec3<T>,
-    radius: T,
-    material: Rc<dyn Scatter<T>>
+pub struct Sphere {
+    center: Vec3<f64>,
+    radius: f64,
+    material: Rc<dyn Scatter>
 }
 
-impl<T: Copy> Sphere<T> {
+impl Sphere {
     /// Creates new Sphere with given center, radius and materials
     /// ```
     /// # use rayimg::{shapes::Sphere, math::Vec3, materials::Lambertian};
@@ -17,7 +17,7 @@ impl<T: Copy> Sphere<T> {
     /// let unit_sphere = Sphere::new(Vec3::new(1.0, 3.0, 2.0), 1.0, Rc::new(Lambertian::default()));
     /// assert!(unit_sphere.center() == Vec3::new(1.0, 3.0, 2.0) && unit_sphere.radius() == 1.0);
     /// ```
-    pub fn new(center: Vec3<T>, radius: T, material: Rc<dyn Scatter<T>>) -> Self {
+    pub fn new(center: Vec3<f64>, radius: f64, material: Rc<dyn Scatter>) -> Self {
         Self {
             center,
             radius,
@@ -32,7 +32,7 @@ impl<T: Copy> Sphere<T> {
     /// let unit_sphere = Sphere::new(Vec3::new(4.0, -3.0, 1.0), 1.0, Rc::new(Lambertian::default()));
     /// assert_eq!(unit_sphere.center(), Vec3::new(4.0, -3.0, 1.0));
     /// ```
-    pub fn center(&self) -> Vec3<T> {
+    pub fn center(&self) -> Vec3<f64> {
         self.center.clone()
     }
 
@@ -43,23 +43,22 @@ impl<T: Copy> Sphere<T> {
     /// let unit_sphere = Sphere::new(Vec3::new(4.0, -3.0, 1.0), 1.0, Rc::new(Lambertian::default()));
     /// assert_eq!(unit_sphere.radius(), 1.0);
     /// ```
-    pub fn radius(&self) -> T {
+    pub fn radius(&self) -> f64 {
         self.radius
     }
 }
 
-impl<T> Hit<T> for Sphere<T>
-    where T: Copy + PartialOrd + Default + Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T> + Neg<Output = T> + From<f64> + Into<f64> {
-    fn hit(&self, ray: &Ray<T>, t_min: T, t_max: T) -> Option<HitRecord<T>> {
+impl Hit for Sphere {
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
         let center_to_origin = ray.origin() - self.center();
         let (a, k, c) = (ray.direction().squared_magnitude(), center_to_origin.dot(&ray.direction()), center_to_origin.squared_magnitude() - self.radius * self.radius);
         let discriminant = k * k - a * c;
 
-        if discriminant < T::default() {
+        if discriminant < f64::default() {
             return None;
         }
 
-        let sqrt_d = discriminant.into().sqrt().into();
+        let sqrt_d = discriminant.sqrt();
         let roots = ((-k - sqrt_d) / a, (-k + sqrt_d) / a);
         let mut t = roots.0;
         if t < t_min || t_max < t {
