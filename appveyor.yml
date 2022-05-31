@@ -11,4 +11,6 @@ build: false
 
 test_script:
   - cargo build --verbose
-  - cargo test --verbose
+  - cargo test --doc --verbose
+  - cargo test --tests --release --verbose
+  - cargo test --examples --verbose

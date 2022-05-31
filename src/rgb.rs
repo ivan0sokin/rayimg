@@ -10,11 +10,11 @@ use std::ops::{Add, Sub, Mul, Div, Neg, AddAssign, SubAssign, MulAssign};
 /// assert_eq!(light_green.as_bytes(), [0, 255, 128]);
 /// assert_eq!(brown.as_bytes(), [99, 66, 33]);
 /// ```
-#[derive(Default, Clone, PartialEq)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct RGB(pub f64, pub f64, pub f64);
 
 impl RGB {
-    const ALMOST_BYTE_MAX_PLUS_ONE: f64 = 256.0 - f64::EPSILON;
+    const ALMOST_BYTE_MAX: f64 = 256.0 - f64::EPSILON;
 
     /// Creates new RGB
     /// ```
@@ -56,6 +56,17 @@ impl RGB {
         self.2
     }
 
+    /// Corrects color based on gamma value, i.e. raises each component to the power 1/gamma
+    /// ```
+    /// # use rayimg::RGB;
+    /// let some_color = RGB(0.01, 0.25, 0.64);
+    /// assert_eq!(some_color.correct_gamma(2.0), RGB(0.1, 0.5, 0.8));
+    /// ```
+    pub fn correct_gamma(&self, gamma: f64) -> RGB {
+        let one_over_gamma = 1.0 / gamma;
+        Self(self.0.powf(one_over_gamma), self.1.powf(one_over_gamma), self.2.powf(one_over_gamma))
+    }
+
     /// Return slice of 3 elements converted from 0.0..1.0 interval to 0..255
     /// ```
     /// # use rayimg::RGB;
@@ -63,7 +74,7 @@ impl RGB {
     /// assert_eq!(light_green.as_bytes(), [255, 255, 128]);
     /// ```
     pub fn as_bytes(&self) -> [u8; 3] {
-        [(self.0 * Self::ALMOST_BYTE_MAX_PLUS_ONE) as u8, (self.1 * Self::ALMOST_BYTE_MAX_PLUS_ONE) as u8, (self.2 * Self::ALMOST_BYTE_MAX_PLUS_ONE) as u8]
+        [(self.0 * Self::ALMOST_BYTE_MAX) as u8, (self.1 * Self::ALMOST_BYTE_MAX) as u8, (self.2 * Self::ALMOST_BYTE_MAX) as u8]
     }
 }
 

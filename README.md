@@ -15,19 +15,27 @@ Add following to your ``Cargo.toml``:
 
 ```toml
 [dependencies]
-rayimg = "0.0.3"
+rayimg = "0.0.4"
 ```
 
 ## Renders
 
-Rendered images can be found in ``tests/output`` directory.
+Rendered images from tests can be found in ``tests/output`` and in ``examples/output`` directories.
 
 ## Tests
 
-To run tests type following in the shell
+To run tests type following in the shell:
 
 ```shell
-cargo test
+cargo test --doc
+cargo test --tests --release
+cargo test --examples
+```
+
+Examples can be compiled and executed by typing next:
+
+```shell
+cargo run --example (example name or nothing to see available examples)
 ```
 
 ## Documentation

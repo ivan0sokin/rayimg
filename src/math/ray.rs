@@ -34,7 +34,7 @@ impl Ray {
     /// ```
     /// # use rayimg::math::{Vec3, Ray};
     /// let ray = Ray::new(Vec3::new(1.0, 2.0, 3.0), Vec3::new(2.0, -3.0, -1.0));
-    /// assert_eq!(ray.direction(), Vec3::new(2.0, -3.0, 1.0));
+    /// assert_eq!(ray.direction(), Vec3::new(2.0, -3.0, -1.0));
     /// ```
     pub fn direction(&self) -> Vec3<f64> {
         self.direction.clone()
@@ -44,7 +44,7 @@ impl Ray {
     /// ```
     /// # use rayimg::math::{Vec3, Ray};
     /// let ray = Ray::new(Vec3::new(1.0, 2.0, 3.0), Vec3::new(2.0, -3.0, -1.0));
-    /// assert_eq!(ray.trace(3.0), Vec3::new(6.0, -9.0, -3.0));
+    /// assert_eq!(ray.trace(3.0), Vec3::new(7.0, -7.0, 0.0));
     /// ```
     pub fn trace(&self, t: f64) -> Vec3<f64> {
         self.origin.clone() + self.direction.clone() * t
