@@ -18,9 +18,12 @@ fn main() {
     });
 
     let bounds = (400, (400 as f64 / aspect_ratio) as usize);
-    
-    let mut depths = user_ray_depths();
-    depths.extend_from_slice(&[1, 5, 10, 50]);
+
+    let args = std::env::args().skip(1).collect::<Vec<String>>();
+    let mut depths = user_ray_depths(&args);
+    if !args.contains(&"--only".into()) {
+        depths.extend_from_slice(&[1, 5, 10, 50]);   
+    }
 
     for ray_depth in depths {
         renderer.set_ray_depth(ray_depth);
@@ -28,8 +31,7 @@ fn main() {
     }    
 }
 
-fn user_ray_depths() -> Vec<usize> {
-    let args = std::env::args().skip(1).collect::<Vec<String>>();
+fn user_ray_depths(args: &[String]) -> Vec<usize> {
     if args.is_empty() {
         return Vec::new();
     }

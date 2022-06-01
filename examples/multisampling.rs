@@ -19,8 +19,11 @@ fn main() {
 
     let bounds = (400, (400 as f64 / aspect_ratio) as usize);
 
-    let mut sample_counts = user_sample_counts();
-    sample_counts.extend_from_slice(&[1, 100, 1000]);
+    let args = std::env::args().skip(1).collect::<Vec<String>>(); 
+    let mut sample_counts = user_sample_counts(&args);
+    if !args.contains(&"--only".into()) {
+        sample_counts.extend_from_slice(&[1, 100, 1000]);        
+    }
 
     for sample_count in sample_counts {
         renderer.set_sample_count(sample_count);        
@@ -28,8 +31,7 @@ fn main() {
     }
 }
 
-fn user_sample_counts() -> Vec<usize> {
-    let args = std::env::args().skip(1).collect::<Vec<String>>();
+fn user_sample_counts(args: &[String]) -> Vec<usize> {
     if args.is_empty() {
         return Vec::new();
     }

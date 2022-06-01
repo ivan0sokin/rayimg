@@ -52,6 +52,19 @@ impl<T> Vec3<T>
 }
 
 impl<T> Vec3<T>
+    where T: Copy + Add<Output = T> + Mul<Output = T> + Sub<Output = T> + From<f64> {
+    /// Returns vector reflected from the normal of unit length
+    /// ```
+    /// # use rayimg::math::Vec3;
+    /// let (v, n) = (Vec3::new(1.0, -2.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
+    /// assert_eq!(v.reflect(&n), Vec3::new(1.0, 2.0, 0.0));
+    /// ```
+    pub fn reflect(&self, normal: &Vec3<T>) -> Self {
+        self.clone() - normal.clone() * (self.dot(normal) * 2.0.into())
+    }
+}
+
+impl<T> Vec3<T>
     where T: Copy + Add<Output = T> + Mul<Output = T> + Div<Output = T> + Into<f64> + From<f64> {
     /// Return vector length
     /// ```
