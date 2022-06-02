@@ -1,4 +1,4 @@
-use rayimg::*;
+use rayimg::{*, math::*, shapes::*, materials::*};
 use std::rc::Rc;
 
 fn main() {    
