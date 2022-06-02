@@ -1,4 +1,4 @@
-use rayimg::{Scene, math::Vec3, Camera, shapes::Sphere, Renderer, P3ImageWriter, materials::Lambertian, RGB};
+use rayimg::*;
 use std::rc::Rc;
 
 fn main() {    
