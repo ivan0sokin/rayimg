@@ -22,5 +22,5 @@ fn main() {
     });
 
     renderer.set_sample_count(1000);
-    renderer.render(P3ImageWriter::new((400, 225), std::fs::File::create("examples/output/lambertian/metal.ppm").expect("Failed to create output file")));
+    renderer.render(P3ImageWriter::new((400, 225), std::fs::File::create("examples/output/lambertian/lambertian.ppm").expect("Failed to create output file")));
 }
