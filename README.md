@@ -15,7 +15,7 @@ Add following to your ``Cargo.toml``:
 
 ```toml
 [dependencies]
-rayimg = "0.0.6"
+rayimg = "0.0.7"
 ```
 
 ## Renders

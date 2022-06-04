@@ -52,7 +52,7 @@ impl<T> Vec3<T>
 }
 
 impl<T> Vec3<T>
-    where T: Copy + Add<Output = T> + Mul<Output = T> + Sub<Output = T> + From<f64> {
+    where T: Copy + Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T> + Neg<Output = T> + From<f64> + Into<f64> {
     /// Returns vector reflected from the normal of unit length
     /// ```
     /// # use rayimg::math::Vec3;
@@ -61,6 +61,13 @@ impl<T> Vec3<T>
     /// ```
     pub fn reflect(&self, normal: &Vec3<T>) -> Self {
         self.clone() - normal.clone() * (self.dot(normal) * 2.0.into())
+    }
+
+    pub fn refract(&self, normal: &Vec3<T>, r: T) -> Self {
+        let cos_theta = (-self.clone()).dot(normal).into().into();
+        let perpendicular = (self.clone() + normal.clone() * cos_theta) * r;
+        let parallel = normal.clone() * (-(1.0 - perpendicular.squared_magnitude().into()).abs().sqrt()).into();
+        perpendicular + parallel
     }
 }
 

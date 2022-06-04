@@ -6,6 +6,7 @@ pub struct HitRecord {
     t: f64,
     point: Vec3<f64>,
     normal: Vec3<f64>,
+    front_face: bool,
     material: Rc<dyn Scatter>
 }
 
@@ -22,6 +23,7 @@ impl HitRecord {
             t,
             point,
             normal: Vec3::default(),
+            front_face: bool::default(),
             material
         }
     }
@@ -49,8 +51,8 @@ impl HitRecord {
     }
 
     pub fn set_face_normal(&mut self, ray: &Ray, normal: Vec3<f64>) {
-        let front_face = ray.direction().dot(&normal) < f64::default();
-        self.normal = if front_face { normal } else { -normal };
+        self.front_face = ray.direction().dot(&normal) < f64::default();
+        self.normal = if self.front_face { normal } else { -normal };
     }
 
     /// Returns normal of hit surface
@@ -63,6 +65,10 @@ impl HitRecord {
     /// ```
     pub fn normal(&self) -> Vec3<f64> {
         self.normal.clone()
+    }
+
+    pub fn front_face(&self) -> bool {
+        self.front_face
     }
 
     pub fn material(&self) -> Rc<dyn Scatter> {

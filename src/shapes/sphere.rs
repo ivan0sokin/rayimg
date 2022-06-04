@@ -70,7 +70,7 @@ impl Hit for Sphere {
 
         let point = ray.trace(t);
         let mut hit_record = HitRecord::new(t, point.clone(),self.material.clone());
-        let normal = (point - self.center()).normalize();
+        let normal = (point - self.center()) / self.radius;
         hit_record.set_face_normal(ray, normal);
         Some(hit_record)
     }
