@@ -1,12 +1,14 @@
 use crate::{rgb::RGB, scatter::Scatter, math::Ray, hit::HitRecord, random::random_in_range};
 
 pub struct Dielectric {
+    albedo: RGB,
     refraction_index: f64
 }
 
 impl Dielectric {
-    pub fn new(refraction_index: f64) -> Self {
+    pub fn new(albedo: RGB, refraction_index: f64) -> Self {
         Self {
+            albedo,
             refraction_index
         }
     }
@@ -33,6 +35,6 @@ impl Scatter for Dielectric {
             unit_direction.refract(&hit_record.normal(), refraction_ratio)
         };
 
-        Some((Ray::new(hit_record.point(), direction), RGB(1.0, 1.0, 1.0)))
+        Some((Ray::new(hit_record.point(), direction), self.albedo.clone()))
     }
 }
