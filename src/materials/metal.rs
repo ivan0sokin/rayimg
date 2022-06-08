@@ -1,11 +1,13 @@
 use crate::{rgb::RGB, scatter::Scatter, math::{Vec3, Ray}, hit::HitRecord};
 
+/// Material that reflects incident rays.
 pub struct Metal {
     albedo: RGB,
     fuzziness: f64
 }
 
 impl Metal {
+    /// Creates new Metal material.
     pub fn new(albedo: RGB, fuzziness: f64) -> Self {
         Self {
             albedo,

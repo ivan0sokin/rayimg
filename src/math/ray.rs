@@ -1,5 +1,6 @@
 use super::vec3::Vec3;
 
+/// Ray is an object which consists of `origin` and `direction`.
 #[derive(Debug, Default, Clone, PartialEq)]
 pub struct Ray {
     origin: Vec3<f64>,
@@ -7,7 +8,7 @@ pub struct Ray {
 }
 
 impl Ray {
-    /// Creates new Ray
+    /// Creates new Ray.
     /// ```
     /// # use rayimg::math::{Vec3, Ray};
     /// let ray = Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, -1.0));
@@ -20,7 +21,7 @@ impl Ray {
         }
     }
 
-    /// Returns origin of ray
+    /// Returns origin of ray.
     /// ```
     /// # use rayimg::math::{Vec3, Ray};
     /// let ray = Ray::new(Vec3::new(1.0, 2.0, 3.0), Vec3::new(2.0, -3.0, -1.0));
@@ -30,7 +31,7 @@ impl Ray {
         self.origin.clone()
     }
 
-    /// Returns direction of ray
+    /// Returns direction of ray.
     /// ```
     /// # use rayimg::math::{Vec3, Ray};
     /// let ray = Ray::new(Vec3::new(1.0, 2.0, 3.0), Vec3::new(2.0, -3.0, -1.0));
@@ -40,7 +41,7 @@ impl Ray {
         self.direction.clone()
     }
 
-    /// Returns end position of traced ray
+    /// Returns end position of traced ray.
     /// ```
     /// # use rayimg::math::{Vec3, Ray};
     /// let ray = Ray::new(Vec3::new(1.0, 2.0, 3.0), Vec3::new(2.0, -3.0, -1.0));

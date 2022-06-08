@@ -15,7 +15,7 @@ Add following to your ``Cargo.toml``:
 
 ```toml
 [dependencies]
-rayimg = "0.0.8"
+rayimg = "0.0.9"
 ```
 
 ## Renders
@@ -35,7 +35,7 @@ cargo test --examples
 Examples can be compiled and executed by typing next:
 
 ```shell
-cargo run --example (example name or nothing to see available examples) --release
+cargo run --examples (examples name or nothing to see available examples) --release
 ```
 
 ## Documentation

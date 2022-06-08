@@ -2,6 +2,7 @@ use crate::{math::{Vec3, Ray}, scatter::Scatter};
 
 use std::rc::Rc;
 
+/// Record of ray-object intersection.
 pub struct HitRecord {
     t: f64,
     point: Vec3<f64>,
@@ -11,7 +12,7 @@ pub struct HitRecord {
 }
 
 impl HitRecord {
-    /// Creates new HitRecord&lt;f64&gt;
+    /// Creates new `HitRecord`.
     /// ```
     /// # use rayimg::{HitRecord, math::Vec3, materials::Lambertian};
     /// # use std::rc::Rc;
@@ -28,7 +29,7 @@ impl HitRecord {
         }
     }
 
-    /// Returns multiplier ***t*** of hit record
+    /// Returns multiplier `t` of hit record.
     /// ```
     /// # use rayimg::{HitRecord, math::Vec3, materials::Lambertian};
     /// # use std::rc::Rc;
@@ -39,7 +40,7 @@ impl HitRecord {
         self.t
     }
 
-    /// Returns point of hit
+    /// Returns point of hit.
     /// ```
     /// # use rayimg::{HitRecord, math::Vec3, materials::Lambertian};
     /// # use std::rc::Rc;
@@ -50,6 +51,7 @@ impl HitRecord {
         self.point.clone()
     }
 
+    /// Sets face normal and determines whether normal points inwards or outwards
     pub fn set_face_normal(&mut self, ray: &Ray, normal: Vec3<f64>) {
         self.front_face = ray.direction().dot(&normal) < f64::default();
         self.normal = if self.front_face { normal } else { -normal };
@@ -67,10 +69,12 @@ impl HitRecord {
         self.normal.clone()
     }
 
+    /// Returns true if normal points outwards.
     pub fn front_face(&self) -> bool {
         self.front_face
     }
 
+    /// Returns material of `Hit` object.
     pub fn material(&self) -> Rc<dyn Scatter> {
         self.material.clone()
     }

@@ -3,13 +3,14 @@ use super::ImageWrite;
 use std::io::Write;
 use crate::image_write::Pixels;
 
+/// Writes bytes (i.e. `[u8; 3]`) to *.ppm files.
 pub struct P3ImageWriter<W> {
     bounds: (usize, usize),
     w: W
 }
 
 impl<W: Write> P3ImageWriter<W> {
-    /// Creates new P3ImageWriter
+    /// Creates new P3ImageWriter.
     /// ```
     /// # use rayimg::{P3ImageWriter, ImageWrite, RGB};
     /// # use std::io::Write;

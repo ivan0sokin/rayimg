@@ -2,6 +2,8 @@ use crate::{hit::{Hit, HitRecord}, math::{Vec3, Ray}, scatter::Scatter};
 
 use std::rc::Rc;
 
+/// Geometric shape, set of points that are all at the same distance called `radius` from the `center`.
+/// Sphere is `Hit`table.
 #[derive(Clone)]
 pub struct Sphere {
     center: Vec3<f64>,
@@ -10,7 +12,7 @@ pub struct Sphere {
 }
 
 impl Sphere {
-    /// Creates new Sphere with given center, radius and materials
+    /// Creates new Sphere.
     /// ```
     /// # use rayimg::{shapes::Sphere, math::Vec3, materials::Lambertian};
     /// # use std::rc::Rc;
@@ -25,7 +27,7 @@ impl Sphere {
         }
     }
 
-    /// Returns center of Sphere
+    /// Returns center of Sphere.
     /// ```
     /// # use rayimg::{shapes::Sphere, math::Vec3, materials::Lambertian};
     /// # use std::rc::Rc;
@@ -36,7 +38,7 @@ impl Sphere {
         self.center.clone()
     }
 
-    /// Returns radius of Sphere
+    /// Returns radius of Sphere.
     /// ```
     /// # use rayimg::{shapes::Sphere, math::Vec3, materials::Lambertian};
     /// # use std::rc::Rc;

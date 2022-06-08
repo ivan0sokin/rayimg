@@ -1,9 +1,10 @@
+/// Pixel iterating object.
 pub struct Pixels<'a> {
     next: Box<dyn FnMut() -> Option<(usize, usize)> + 'a>
 }
 
 impl<'a> Pixels<'a> {
-    /// Creates new Pixels struct
+    /// Creates new Pixels struct.
     /// ```
     /// # use rayimg::Pixels;
     /// let (bounds, mut cur) = ((9, 9), (0, 0));

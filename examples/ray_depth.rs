@@ -9,15 +9,11 @@ fn main() {
     scene.add_object(red_sphere);
     scene.add_object(blue_sphere);
 
-    let aspect_ratio = 16.0 / 9.0;
-    let camera = Camera::new(Vec3::new(0.0, 0.0, 0.0), (2.0 * aspect_ratio, 2.0), 1.0);
-    let mut renderer = Renderer::new(scene, camera, |r| {
+    let mut renderer = Renderer::new(scene, Camera::new().build(), |r| {
         let unit_direction = r.direction().normalize();
         let t = 0.5 * (unit_direction.y + 1.0);
         (Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + Vec3::new(0.5, 0.7, 1.0) * t).into()
     });
-
-    let bounds = (400, (400 as f64 / aspect_ratio) as usize);
 
     let args = std::env::args().skip(1).collect::<Vec<String>>();
     let mut depths = user_ray_depths(&args);
@@ -27,15 +23,11 @@ fn main() {
 
     for ray_depth in depths {
         renderer.set_ray_depth(ray_depth);
-        renderer.render(P3ImageWriter::new(bounds, std::fs::File::create(format!("examples/output/ray_depth/ray_depth_{}.ppm", ray_depth)).expect("Failed to create output file")));
+        renderer.render(P3ImageWriter::new((400, 225), std::fs::File::create(format!("examples/output/ray_depth/ray_depth_{}.ppm", ray_depth)).expect("Failed to create output file")));
     }    
 }
 
 fn user_ray_depths(args: &[String]) -> Vec<usize> {
-    if args.is_empty() {
-        return Vec::new();
-    }
-
     let mut ray_depths = Vec::new();
     for arg in args {
         match arg.parse::<usize>() {

@@ -4,6 +4,7 @@ use rand::{distributions::Standard, prelude::Distribution};
 
 use crate::{rgb::RGB, random::random_in_range};
 
+/// 3-dimensional generic vector.
 #[derive(Debug, Default, Clone, Eq, PartialEq)]
 pub struct Vec3<T> {
     pub x: T,
@@ -12,7 +13,7 @@ pub struct Vec3<T> {
 }
 
 impl<T> Vec3<T> {
-    /// Creates new Vec3&lt;T&gt;
+    /// Creates new `Vec3<T>`.
     /// ```
     /// # use rayimg::math::Vec3;
     /// let some_vector = Vec3::new(1.0, 3.0, -2.0);
@@ -28,8 +29,8 @@ impl<T> Vec3<T> {
 }
 
 impl<T> Vec3<T>
-    where T: Copy + Add<Output = T> + Mul<Output = T> {
-    /// Return squared length of vector
+    where T: Copy + Add<Output = T> + Sub<Output = T> + Mul<Output = T> {
+    /// Return squared length of vector.
     /// ```
     /// # use rayimg::math::Vec3;
     /// let some_vector = Vec3::new(1.0, 3.0, -2.0);
@@ -39,7 +40,7 @@ impl<T> Vec3<T>
         self.x * self.x + self.y * self.y + self.z * self.z
     }
 
-    /// Returns dot product of two vectors
+    /// Returns dot product of two vectors.
     /// ```
     /// # use rayimg::math::Vec3;
     /// let (v1, v2) = (Vec3::new(0.0, 1.0, 2.0), Vec3::new(3.0, -4.0, 5.0));
@@ -49,11 +50,25 @@ impl<T> Vec3<T>
     pub fn dot(&self, other: &Vec3<T>) -> T {
         self.x * other.x + self.y * other.y + self.z * other.z
     }
+
+    /// Returns cross product of two vectors.
+    /// ```
+    /// # use rayimg::math::Vec3;
+    /// let (v1, v2) = (Vec3::new(0.0, 1.0, 0.0), Vec3::new(0.0, 0.0, 1.0));
+    /// assert_eq!(v1.cross(&v2), Vec3::new(1.0, 0.0, 0.0));
+    /// ```
+    pub fn cross(&self, other: &Vec3<T>) -> Vec3<T> {
+        Self {
+            x: self.y * other.z - self.z * other.y,
+            y: self.z * other.x - self.x * other.z,
+            z: self.x * other.y - self.y * other.x
+        }
+    }
 }
 
 impl<T> Vec3<T>
     where T: Copy + Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T> + Neg<Output = T> + From<f64> + Into<f64> {
-    /// Returns vector reflected from the normal of unit length
+    /// Returns vector reflected from the normal of **unit length**.
     /// ```
     /// # use rayimg::math::Vec3;
     /// let (v, n) = (Vec3::new(1.0, -2.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
@@ -63,6 +78,7 @@ impl<T> Vec3<T>
         self.clone() - normal.clone() * (self.dot(normal) * 2.0.into())
     }
 
+    /// Returns refracted vetcor from the normal of **unit length**.
     pub fn refract(&self, normal: &Vec3<T>, r: T) -> Self {
         let cos_theta = (-self.clone()).dot(normal).into().into();
         let perpendicular = (self.clone() + normal.clone() * cos_theta) * r;
@@ -72,8 +88,8 @@ impl<T> Vec3<T>
 }
 
 impl<T> Vec3<T>
-    where T: Copy + Add<Output = T> + Mul<Output = T> + Div<Output = T> + Into<f64> + From<f64> {
-    /// Return vector length
+    where T: Copy + Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T> + Into<f64> + From<f64> {
+    /// Returns vector length.
     /// ```
     /// # use rayimg::math::Vec3;
     /// let some_vector = Vec3::new(1.0, 3.0, -2.0);
@@ -82,7 +98,8 @@ impl<T> Vec3<T>
     pub fn len(&self) -> T {
         self.squared_magnitude().into().sqrt().into()
     }
-    /// Returns normalized vector (i.e. vector with length 1)
+
+    /// Returns normalized vector (i.e. vector with length camera).
     /// ```
     /// # use rayimg::math::Vec3;
     /// let non_unit_vector = Vec3::new(1.0, 2.0, 3.0);
@@ -97,6 +114,7 @@ impl<T> Vec3<T>
 
 impl<T> Vec3<T>
     where T: Copy + Into<f64> + PartialOrd {
+    /// Returns true if all coordinates of vector are less than some epsilon.
     pub fn near_epsilon(&self, epsilon: T) -> bool {
         let epsilon = epsilon.into();
         self.x.into().abs() < epsilon && self.y.into().abs() < epsilon && self.z.into().abs() < epsilon
@@ -104,7 +122,7 @@ impl<T> Vec3<T>
 }
 
 impl<T> Vec3<T> where T: From<f64>, Standard: Distribution<T> {
-    /// Returns random Vec3&lt;T&gt; with coordinates in range [-1.0..1.0]
+    /// Returns random `Vec3<T>` with coordinates in range `-1.0..=1.0`.
     /// ```
     /// # use rayimg::math::Vec3;
     /// let vector = Vec3::random();

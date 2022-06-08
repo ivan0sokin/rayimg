@@ -1,6 +1,6 @@
 use std::ops::{Add, Sub, Mul, Div, Neg, AddAssign, SubAssign, MulAssign};
 
-/// Color structure with components in interval from 0.0 to 1.0.
+/// Color structure with components in interval `0.0..=1.0`.
 /// ```
 /// use rayimg::RGB;
 ///
@@ -16,7 +16,7 @@ pub struct RGB(pub f64, pub f64, pub f64);
 impl RGB {
     const ALMOST_BYTE_MAX: f64 = 256.0 - f64::EPSILON;
 
-    /// Creates new RGB
+    /// Creates new `RGB`.
     /// ```
     /// # use rayimg::RGB;
     /// let light_green = RGB::new(0.0, 1.0, 0.5);
@@ -26,7 +26,7 @@ impl RGB {
         RGB(r, g, b)
     }
 
-    /// Returns red component of RGB&lt;f64&gt;
+    /// Returns red component of color.
     /// ```
     /// # use rayimg::RGB;
     /// let brown = RGB::new(0.39, 0.26, 0.13);
@@ -36,7 +36,7 @@ impl RGB {
         self.0
     }
 
-    /// Returns green component of RGB&lt;f64&gt;
+    /// Returns green component of color.
     /// ```
     /// # use rayimg::RGB;
     /// let brown = RGB::new(0.39, 0.26, 0.13);
@@ -46,7 +46,7 @@ impl RGB {
         self.1
     }
 
-    /// Returns blue component of RGB&lt;f64&gt;
+    /// Returns blue component color.
     /// ```
     /// # use rayimg::RGB;
     /// let brown = RGB::new(0.39, 0.26, 0.13);
@@ -56,7 +56,7 @@ impl RGB {
         self.2
     }
 
-    /// Corrects color based on gamma value, i.e. raises each component to the power 1/gamma
+    /// Corrects color based on gamma value, i.e. raises each component to the power camera/gamma.
     /// ```
     /// # use rayimg::RGB;
     /// let some_color = RGB(0.01, 0.25, 0.64);
@@ -67,7 +67,7 @@ impl RGB {
         Self(self.0.powf(one_over_gamma), self.1.powf(one_over_gamma), self.2.powf(one_over_gamma))
     }
 
-    /// Return slice of 3 elements converted from 0.0..1.0 interval to 0..255
+    /// Return slice of 3 elements converted from `0.0..=1.0` to `0..=255`.
     /// ```
     /// # use rayimg::RGB;
     /// let light_green = RGB::new(1.0, 1.0, 0.5);

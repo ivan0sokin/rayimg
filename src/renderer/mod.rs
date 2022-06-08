@@ -2,6 +2,7 @@ use crate::{scene::Scene, image_write::ImageWrite, rgb::RGB, camera::Camera, mat
 
 pub type RayMiss<'a> = dyn Fn(&Ray) -> RGB + 'a;
 
+/// Renders scene to some image (or buffer).
 pub struct Renderer<'a> {
     scene: Scene<'a>,
     camera: Camera,
@@ -11,27 +12,28 @@ pub struct Renderer<'a> {
 }
 
 impl<'a> Renderer<'a> {
-    const DEFAULT_SAMPLE_COUNT: usize = 100;
-    const DEFAULT_RAY_DEPTH: usize = 50;
-
+    /// Returns new Renderer.
     pub fn new(scene: Scene<'a>, camera: Camera, ray_miss: impl Fn(&Ray) -> RGB + 'a) -> Self {
         Self {
             scene,
             camera,
-            sample_count: Self::DEFAULT_SAMPLE_COUNT,
-            ray_depth: Self::DEFAULT_RAY_DEPTH,
+            sample_count: 100,
+            ray_depth: 50,
             ray_miss: Box::new(ray_miss)
         }
     }
 
+    /// Sets count of samples per pixel.
     pub fn set_sample_count(&mut self, sample_count: usize) {
         self.sample_count = sample_count.clamp(1, usize::MAX);
     }
-    
+
+    /// Sets maximum ray refractions/reflections count.
     pub fn set_ray_depth(&mut self, ray_depth: usize) {
         self.ray_depth = ray_depth.clamp(1, usize::MAX);
     }
 
+    /// Renders image to `ImageWrite<[u8; 3]>` buffer.
     pub fn render<IW: ImageWrite<[u8; 3]>>(&self, mut iw: IW) {
         iw.write_header();
 

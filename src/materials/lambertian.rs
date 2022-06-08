@@ -1,11 +1,13 @@
 use crate::{hit::HitRecord, rgb::RGB, scatter::Scatter, math::{Vec3, Ray}};
 
-#[derive(Default)]
+/// A simple diffuse material.\
+/// When rays intersects object it bounces from the surface in random direction.
 pub struct Lambertian {
     albedo: RGB
 }
 
 impl Lambertian {
+    /// Creates new Lambertian material.
     pub fn new(albedo: RGB) -> Self {
         Self {
             albedo

@@ -9,17 +9,13 @@ fn main() {
     scene.add_object(blue_sphere);
     scene.add_object(grey_sphere);
 
-    let aspect_ratio = 16.0 / 9.0;
-    let camera = Camera::new(Vec3::new(0.0, 0.0, 0.0), (2.0 * aspect_ratio, 2.0), 1.0);
-    let mut renderer = Renderer::new(scene, camera, |r| {
+    let mut renderer = Renderer::new(scene, Camera::new().build(), |r| {
         let unit_direction = r.direction().normalize();
         let t = 0.5 * (unit_direction.y + 1.0);
         (Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + Vec3::new(0.5, 0.7, 1.0) * t).into()
     });
 
-    let bounds = (400, (400 as f64 / aspect_ratio) as usize);
-
-    let args = std::env::args().skip(1).collect::<Vec<String>>(); 
+    let args = std::env::args().skip(1).collect::<Vec<String>>();
     let mut sample_counts = user_sample_counts(&args);
     if !args.contains(&"--only".into()) {
         sample_counts.extend_from_slice(&[1, 100, 1000]);        
@@ -27,15 +23,11 @@ fn main() {
 
     for sample_count in sample_counts {
         renderer.set_sample_count(sample_count);        
-        renderer.render(P3ImageWriter::new(bounds, std::fs::File::create(format!("examples/output/multisampling/{}_sample_per_pixel.ppm", sample_count)).expect("Failed to create output file")));
+        renderer.render(P3ImageWriter::new((400, 225), std::fs::File::create(format!("examples/output/multisampling/{}_sample_per_pixel.ppm", sample_count)).expect("Failed to create output file")));
     }
 }
 
 fn user_sample_counts(args: &[String]) -> Vec<usize> {
-    if args.is_empty() {
-        return Vec::new();
-    }
-
     let mut sample_counts = Vec::new();
     for arg in args {
         match arg.parse::<usize>() {

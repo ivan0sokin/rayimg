@@ -13,9 +13,7 @@ fn main() {
     scene.add_object(yellow_sphere);
     scene.add_object(grey_sphere);
 
-    let aspect_ratio = 16.0 / 9.0;
-    let camera = Camera::new(Vec3::new(0.0, 0.0, 0.0), (2.0 * aspect_ratio, 2.0), 1.0);
-    let mut renderer = Renderer::new(scene, camera, |r| {
+    let mut renderer = Renderer::new(scene, Camera::new().build(), |r| {
         let unit_direction = r.direction().normalize();
         let t = 0.5 * (unit_direction.y + 1.0);
         (Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + Vec3::new(0.5, 0.7, 1.0) * t).into()

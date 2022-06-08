@@ -1,11 +1,13 @@
 use crate::{rgb::RGB, scatter::Scatter, math::Ray, hit::HitRecord, random::random_in_range};
 
+/// Material that sometimes reflects and sometimes refracts.
 pub struct Dielectric {
     albedo: RGB,
     refraction_index: f64
 }
 
 impl Dielectric {
+    /// Creates new Dielectric material.
     pub fn new(albedo: RGB, refraction_index: f64) -> Self {
         Self {
             albedo,
