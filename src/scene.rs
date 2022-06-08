@@ -33,10 +33,10 @@ impl<'a> Scene<'a> {
 
     /// Adds object to scene
     /// ```
-    /// # use rayimg::{Scene, shapes::Sphere, math::Vec3, materials::Lambertian};
+    /// # use rayimg::{Scene, shapes::Sphere, math::Vec3, materials::Lambertian, RGB};
     /// # use std::rc::Rc;
     /// let mut test_scene = Scene::new();
-    /// test_scene.add_object(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0, Rc::new(Lambertian::default())));
+    /// test_scene.add_object(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0, Rc::new(Lambertian::new(RGB::default()))));
     /// assert_eq!(test_scene.object_count(), 1);
     /// ```
     pub fn add_object(&mut self, object: impl Hit + 'a) {
@@ -45,10 +45,10 @@ impl<'a> Scene<'a> {
 
     /// Returns count of objects
     /// ```
-    /// # use rayimg::{Scene, shapes::Sphere, math::Vec3, materials::Lambertian};
+    /// # use rayimg::{Scene, shapes::Sphere, math::Vec3, materials::Lambertian, RGB};
     /// # use std::rc::Rc;
     /// let mut test_scene = Scene::new();
-    /// let unit_sphere = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0, Rc::new(Lambertian::default()));
+    /// let unit_sphere = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0, Rc::new(Lambertian::new(RGB::default())));
     /// test_scene.add_object(unit_sphere.clone());
     /// test_scene.add_object(unit_sphere.clone());
     /// test_scene.add_object(unit_sphere.clone());
