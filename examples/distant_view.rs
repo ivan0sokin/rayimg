@@ -22,11 +22,13 @@ fn main() {
         .position(position)
         .build();
 
-    let renderer = Renderer::new(scene, camera, |r| {
-        let unit_direction = r.direction().normalize();
-        let t = 0.5 * (unit_direction.y + 1.0);
-        (Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + Vec3::new(0.5, 0.7, 1.0) * t).into()
-    });
+    let renderer = Renderer::new(scene, camera)
+        .ray_miss(|r| {
+            let unit_direction = r.direction().normalize();
+            let t = 0.5 * (unit_direction.y + 1.0);
+            (Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + Vec3::new(0.5, 0.7, 1.0) * t).into()
+        })
+        .build();
 
     renderer.render(P3ImageWriter::new((400, 225), std::fs::File::create("examples/output/distant_view/distant_view.ppm").expect("Failed to create output file")));
 }

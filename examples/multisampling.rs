@@ -9,11 +9,7 @@ fn main() {
     scene.add_object(blue_sphere);
     scene.add_object(grey_sphere);
 
-    let mut renderer = Renderer::new(scene, Camera::new().build(), |r| {
-        let unit_direction = r.direction().normalize();
-        let t = 0.5 * (unit_direction.y + 1.0);
-        (Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + Vec3::new(0.5, 0.7, 1.0) * t).into()
-    });
+
 
     let args = std::env::args().skip(1).collect::<Vec<String>>();
     let mut sample_counts = user_sample_counts(&args);
@@ -22,7 +18,15 @@ fn main() {
     }
 
     for sample_count in sample_counts {
-        renderer.set_sample_count(sample_count);        
+        let renderer = Renderer::new(scene.clone(), Camera::default())
+            .ray_miss(|r| {
+                let unit_direction = r.direction().normalize();
+                let t = 0.5 * (unit_direction.y + 1.0);
+                (Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + Vec3::new(0.5, 0.7, 1.0) * t).into()
+            })
+            .sample_count(sample_count)
+            .build();
+
         renderer.render(P3ImageWriter::new((400, 225), std::fs::File::create(format!("examples/output/multisampling/{}_sample_per_pixel.ppm", sample_count)).expect("Failed to create output file")));
     }
 }

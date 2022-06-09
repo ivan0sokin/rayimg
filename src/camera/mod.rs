@@ -29,3 +29,9 @@ impl Camera {
         Ray::new(self.position.clone(), self.lower_left_corner.clone() + self.horizontal.clone() * offset.0 + self.vertical.clone() * offset.1 - self.position.clone())
     }
 }
+
+impl Default for Camera {
+    fn default() -> Self {
+        Camera::new().build()
+    }
+}

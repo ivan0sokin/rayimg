@@ -1,36 +1,27 @@
-use crate::{scene::Scene, image_write::ImageWrite, rgb::RGB, camera::Camera, math::Ray, hit::Hit, random::random_in_range};
+mod renderer_builder;
 
-pub type RayMiss<'a> = dyn Fn(&Ray) -> RGB + 'a;
+use crate::{scene::Scene, image_write::ImageWrite, rgb::RGB, camera::Camera, math::Ray, hit::Hit, random::random_in_range};
+use renderer_builder::RendererBuilder;
 
 /// Renders scene to some image (or buffer).
 pub struct Renderer<'a> {
-    scene: Scene<'a>,
-    camera: Camera,
-    sample_count: usize,
-    ray_depth: usize,
-    ray_miss: Box<RayMiss<'a>>
+    pub(super) scene: Scene<'a>,
+    pub(super) camera: Camera,
+    pub(super) sample_count: usize,
+    pub(super) ray_depth: usize,
+    pub(super) ray_miss: Box<dyn Fn(&Ray) -> RGB + 'a>
 }
 
 impl<'a> Renderer<'a> {
-    /// Returns new Renderer.
-    pub fn new(scene: Scene<'a>, camera: Camera, ray_miss: impl Fn(&Ray) -> RGB + 'a) -> Self {
-        Self {
+    /// Returns new `RendererBuilder`.
+    pub fn new(scene: Scene<'a>, camera: Camera) -> RendererBuilder {
+        RendererBuilder {
             scene,
             camera,
             sample_count: 100,
             ray_depth: 50,
-            ray_miss: Box::new(ray_miss)
+            ray_miss: Box::new(|_| RGB::default())
         }
-    }
-
-    /// Sets count of samples per pixel.
-    pub fn set_sample_count(&mut self, sample_count: usize) {
-        self.sample_count = sample_count.clamp(1, usize::MAX);
-    }
-
-    /// Sets maximum ray refractions/reflections count.
-    pub fn set_ray_depth(&mut self, ray_depth: usize) {
-        self.ray_depth = ray_depth.clamp(1, usize::MAX);
     }
 
     /// Renders image to `ImageWrite<[u8; 3]>` buffer.
