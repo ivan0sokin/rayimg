@@ -1,8 +1,6 @@
 mod configuration;
 use configuration::*;
 
-use rayimg::{Scene, Renderer, P3ImageWriter, RGB};
-
 #[test]
 fn create_black_image() {
     let renderer = Renderer::new(Scene::new(), Camera::default()).build();

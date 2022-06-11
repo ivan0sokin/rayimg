@@ -18,11 +18,11 @@ impl Metal {
 
 impl Scatter for Metal {
     fn scatter(&self, ray: &Ray, hit_record: &HitRecord) -> Option<(Ray, RGB)> {
-        let reflected = ray.direction().normalize().reflect(&hit_record.normal()) + Vec3::random().normalize() * self.fuzziness;
+        let reflected = ray.direction().normalize().reflect(&hit_record.normal());
         if reflected.dot(&hit_record.normal()) <= 0.0 {
             None
         } else {
-            Some((Ray::new(hit_record.point(), reflected), self.albedo.clone()))
+            Some((Ray::new(hit_record.point(), reflected + Vec3::random_in_unit_sphere() * self.fuzziness), self.albedo.clone()))
         }
     }
 }

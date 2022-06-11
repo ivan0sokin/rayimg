@@ -1,4 +1,4 @@
-use {super::Camera, crate::math::Vec3};
+use {super::{Camera, lens::Lens}, crate::math::Vec3};
 
 /// `CameraBuilder` builds camera with given parameters.
 pub struct CameraBuilder {
@@ -7,7 +7,9 @@ pub struct CameraBuilder {
     pub(super) up: Vec3<f64>,
     pub(super) vertical_fov: f64,
     pub(super) viewport_height: f64,
-    pub(super) aspect_ratio: f64
+    pub(super) aspect_ratio: f64,
+    pub(super) aperture: f64,
+    pub(super) focus_distance: f64
 }
 
 impl CameraBuilder {
@@ -47,6 +49,17 @@ impl CameraBuilder {
         self
     }
 
+    /// Sets `Camera` lens.
+    pub fn aperture(mut self, aperture: f64) -> Self {
+        self.aperture = aperture;
+        self
+    }
+
+    pub fn focus_distance(mut self, focus_distance: f64) -> Self {
+        self.focus_distance = focus_distance;
+        self
+    }
+
     /// Returns built `Camera`.
     pub fn build(self) -> Camera {
         let h = (self.vertical_fov * 0.5).to_radians().tan();
@@ -56,13 +69,14 @@ impl CameraBuilder {
         let w = (self.position.clone() - self.target).normalize();
         let u = self.up.cross(&w).normalize();
         let v = w.cross(&u);
-        let (horizontal, vertical) = (u * width, v * height);
+        let (horizontal, vertical) = (u.clone() * width * self.focus_distance, v.clone() * height * self.focus_distance);
 
         Camera {
             position: self.position.clone(),
-            lower_left_corner: self.position - horizontal.clone() * 0.5 - vertical.clone() * 0.5 - w,
+            lower_left_corner: self.position - horizontal.clone() * 0.5 - vertical.clone() * 0.5 - w * self.focus_distance,
             horizontal,
-            vertical
+            vertical,
+            lens: Lens::new(self.aperture * 0.5, u, v)
         }
     }
 }

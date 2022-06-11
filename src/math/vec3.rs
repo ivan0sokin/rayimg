@@ -1,8 +1,6 @@
-use std::ops::{Add, Sub, Mul, Div, Neg, AddAssign, SubAssign, MulAssign, DivAssign};
-
-use rand::{distributions::Standard, prelude::Distribution};
-
 use crate::{rgb::RGB, random::random_in_range};
+use rand::{distributions::Standard, prelude::Distribution};
+use std::ops::{Add, Sub, Mul, Div, Neg, AddAssign, SubAssign, MulAssign, DivAssign};
 
 /// 3-dimensional generic vector.
 #[derive(Debug, Default, Clone, Eq, PartialEq)]
@@ -121,20 +119,50 @@ impl<T> Vec3<T>
     }
 }
 
-impl<T> Vec3<T> where T: From<f64>, Standard: Distribution<T> {
-    /// Returns random `Vec3<T>` with coordinates in range `-1.0..=1.0`.
+impl<T> Vec3<T> where T: Copy + Add<Output = T> + Sub<Output = T> + Mul<Output = T> + Div<Output = T> + Into<f64> + From<f64> + Default + PartialOrd, Standard: Distribution<T> {
+    /// Returns random `Vec3<T>` with coordinates in range `-1.0..1.0` and length < 1.0.
     /// ```
     /// # use rayimg::math::Vec3;
-    /// let vector = Vec3::random();
+    /// let vector = Vec3::random_in_unit_sphere();
     /// assert!(-1.0 <= vector.x && vector.x <= 1.0);
     /// assert!(-1.0 <= vector.y && vector.y <= 1.0);
     /// assert!(-1.0 <= vector.z && vector.z <= 1.0);
+    /// assert!(vector.len() < 1.0);
     /// ```
-    pub fn random() -> Self {
-        Self {
-            x: random_in_range(-1.0..=1.0).into(),
-            y: random_in_range(-1.0..=1.0).into(),
-            z: random_in_range(-1.0..=1.0).into()
+    pub fn random_in_unit_sphere() -> Self {
+        loop {
+            let v = Self {
+                x: random_in_range(-1.0..1.0).into(),
+                y: random_in_range(-1.0..1.0).into(),
+                z: random_in_range(-1.0..1.0).into()
+            };
+
+            if v.squared_magnitude() < 1.0.into() {
+                return v;
+            }
+        }
+    }
+
+    /// Returns random `Vec3<T>` with `x` and `y` in range `-1.0..1.0` (z = 0.0) and length < 1.0.
+    /// ```
+    /// # use rayimg::math::Vec3;
+    /// let vector = Vec3::random_in_unit_disk();
+    /// assert!(-1.0 <= vector.x && vector.x <= 1.0);
+    /// assert!(-1.0 <= vector.y && vector.y <= 1.0);
+    /// assert_eq!(vector.z, 0.0);
+    /// assert!(vector.len() < 1.0);
+    /// ```
+    pub fn random_in_unit_disk() -> Self {
+        loop {
+            let v = Self {
+                x: random_in_range(-1.0..1.0).into(),
+                y: random_in_range(-1.0..1.0).into(),
+                z: T::default()
+            };
+
+            if v.squared_magnitude() < 1.0.into() {
+                return v;
+            }
         }
     }
 }

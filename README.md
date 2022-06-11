@@ -15,7 +15,7 @@ Add following to your ``Cargo.toml``:
 
 ```toml
 [dependencies]
-rayimg = "0.0.10"
+rayimg = "0.1.0"
 ```
 
 ## Renders
@@ -36,6 +36,13 @@ Examples can be compiled and executed by typing next:
 
 ```shell
 cargo run --examples (examples name or nothing to see available examples) --release
+```
+
+## Benchmarks
+
+To run benchmarks you should install rustup nightly toolchain and then enter:
+```shell
+rustup run nightly cargo bench
 ```
 
 ## Documentation
