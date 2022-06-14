@@ -1,5 +1,5 @@
 ![version](https://img.shields.io/crates/v/rayimg)
-![License](https://img.shields.io/crates/l/rayimg)
+![license](https://img.shields.io/crates/l/rayimg)
 ![build](https://img.shields.io/appveyor/build/ivan0sokin/rayimg)
 
 # Ray image
@@ -15,7 +15,7 @@ Add following to your ``Cargo.toml``:
 
 ```toml
 [dependencies]
-rayimg = "0.1.0"
+rayimg = "0.1.1"
 ```
 
 ## Renders

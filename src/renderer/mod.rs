@@ -25,27 +25,24 @@ impl<'a> Renderer<'a> {
     }
 
     /// Renders image to `ImageWrite<[u8; 3]>` buffer.
-    pub fn render<IW: ImageWrite<[u8; 3]>>(&self, mut iw: IW) {
-        iw.write_header();
-
+    pub fn render<IW: ImageWrite<Color = [u8; 3]>>(&self, mut iw: IW) {
         let scale = 1.0 / self.sample_count as f64;
         let bounds = iw.bounds();
         let mut buf = vec![[0, 0, 0]; bounds.0 * bounds.1];
-        for (i, pixel) in iw.pixels().enumerate() {
-            let mut color = RGB::default();
-            for _ in 0..self.sample_count {
-                let (r1, r2) = (random_in_range(0.0..1.0), random_in_range(0.0..1.0));
-                let offset = ((pixel.0 as f64 + r1) / bounds.0 as f64, (pixel.1 as f64 + r2) / bounds.1 as f64);
-                let ray = self.camera.ray_to_viewport(&offset);
-                color += self.ray_color(&ray, self.ray_depth);
+        for y in 0..bounds.1 {
+            for x in 0..bounds.0 {
+                let mut color = RGB::default();
+                for _ in 0..self.sample_count {
+                    let offset = ((x as f64 + random_in_range(0.0..1.0)) / (bounds.0 as f64 - 1.0), (y as f64 + random_in_range(0.0..1.0)) / (bounds.1 as f64 - 1.0));
+                    let ray = self.camera.ray_to_viewport(&offset);
+                    color += self.ray_color(&ray, self.ray_depth);
+                }
+
+                buf[(bounds.1 - y - 1) * bounds.0 + x] = (color * scale).correct_gamma(2.0).as_bytes();
             }
-            
-            buf[i] = (color * scale).correct_gamma(2.0).as_bytes();
         }
 
-        for color in buf {
-            iw.write_color(&color);
-        }
+        iw.write_image_data(&buf);
     }
 
     fn ray_color(&self, ray: &Ray, depth: usize) -> RGB {

@@ -13,7 +13,7 @@ pub mod shapes;
 mod random;
 
 pub use {camera::Camera,
-         image_write::{ImageWrite, Pixels, P3ImageWriter},
+         image_write::{ImageWrite, P3ImageWriter},
          hit::{Hit, HitRecord},
          scatter::Scatter,
          renderer::Renderer,

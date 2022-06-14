@@ -1,3 +1,5 @@
+/// Simple materials which scatter light.
+
 mod lambertian;
 mod metal;
 mod dielectric;

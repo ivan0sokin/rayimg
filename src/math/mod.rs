@@ -1,3 +1,5 @@
+/// Math needed for ray tracing.
+
 mod vec3;
 mod ray;
 
