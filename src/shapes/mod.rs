@@ -1,5 +1,4 @@
-/// List of hittable shapes.
-
 mod sphere;
+mod triangle;
 
-pub use self::sphere::Sphere;
+pub use {sphere::Sphere, triangle::Triangle};

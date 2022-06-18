@@ -3,13 +3,21 @@
 mod scene;
 mod hit;
 mod scatter;
+
+/// Simple materials which scatter light.
 pub mod materials;
+
+/// Math needed for ray tracing.
 pub mod math;
+
 mod renderer;
 mod image_write;
 mod rgb;
 mod camera;
+
+/// List of hittable shapes.
 pub mod shapes;
+
 mod random;
 
 pub use {camera::Camera,
