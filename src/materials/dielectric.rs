@@ -25,18 +25,20 @@ impl Dielectric {
 impl Scatter for Dielectric {
     fn scatter(&self, ray: &Ray, hit_record: &HitRecord) -> Option<(Ray, RGB)> {
         let unit_direction = ray.direction().normalize();
+        let normal = hit_record.normal();
+        
         let refraction_ratio = if hit_record.front_face() { 1.0 / self.refraction_index } else { self.refraction_index };
 
-        let cos_theta = (-unit_direction.clone()).dot(&hit_record.normal());
+        let cos_theta = (-unit_direction).dot(&normal);
         let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
 
         let cannot_refract = (refraction_ratio * sin_theta) > 1.0;
         let direction = if cannot_refract || Dielectric::reflectance(cos_theta, refraction_ratio) > random_in_range(0.0..1.0) {
-            unit_direction.reflect(&hit_record.normal())
+            unit_direction.reflect(normal)
         } else {
-            unit_direction.refract(&hit_record.normal(), refraction_ratio)
+            unit_direction.refract(normal, refraction_ratio)
         };
 
-        Some((Ray::new(hit_record.point(), direction), self.albedo.clone()))
+        Some((Ray::new(hit_record.point(), direction), self.albedo))
     }
 }

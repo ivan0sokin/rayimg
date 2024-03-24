@@ -7,7 +7,7 @@ pub struct RendererBuilder<'a> {
     pub(super) camera: Camera,
     pub(super) sample_count: usize,
     pub(super) ray_depth: usize,
-    pub(super) ray_miss: Box<dyn Fn(&Ray) -> RGB + 'a>
+    pub(super) ray_miss: Box<dyn Fn(&Ray) -> RGB + 'a + Sync>
 }
 
 impl<'a> RendererBuilder<'a> {
@@ -24,7 +24,7 @@ impl<'a> RendererBuilder<'a> {
     }
 
     /// Sets missing ray color.
-    pub fn ray_miss(mut self, ray_miss: impl Fn(&Ray) -> RGB + 'a) -> Self {
+    pub fn ray_miss(mut self, ray_miss: impl Fn(&Ray) -> RGB + 'a + Sync) -> Self {
         self.ray_miss = Box::new(ray_miss);
         self
     }

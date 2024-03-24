@@ -10,7 +10,7 @@ use std::ops::{Add, Sub, Mul, Div, Neg, AddAssign, SubAssign, MulAssign};
 /// assert_eq!(light_green.as_bytes(), [0, 255, 128]);
 /// assert_eq!(brown.as_bytes(), [99, 66, 33]);
 /// ```
-#[derive(Debug, Default, Clone, PartialEq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
 pub struct RGB(pub f64, pub f64, pub f64);
 
 impl RGB {

@@ -1,10 +1,9 @@
 use rayimg::{*, math::*, shapes::*, materials::*};
-use std::rc::Rc;
 
 fn main() {    
     let mut scene = Scene::new();
-    let red_sphere = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, Rc::new(Lambertian::new(RGB(1.0, 0.0, 0.0))));
-    let blue_sphere = Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0, Rc::new(Lambertian::new(RGB(0.0, 0.0, 1.0))));
+    let red_sphere = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5, Lambertian::new(RGB(1.0, 0.0, 0.0)));
+    let blue_sphere = Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0, Lambertian::new(RGB(0.0, 0.0, 1.0)));
 
     scene.add_object(red_sphere);
     scene.add_object(blue_sphere);

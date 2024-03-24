@@ -9,7 +9,7 @@ pub struct Renderer<'a> {
     pub(super) camera: Camera,
     pub(super) sample_count: usize,
     pub(super) ray_depth: usize,
-    pub(super) ray_miss: Box<dyn Fn(&Ray) -> RGB + 'a>
+    pub(super) ray_miss: Box<dyn Fn(&Ray) -> RGB + 'a + Sync>
 }
 
 impl<'a> Renderer<'a> {
@@ -25,10 +25,10 @@ impl<'a> Renderer<'a> {
     }
 
     /// Renders image to `ImageWrite<[u8; 3]>` buffer.
-    pub fn render<IW: ImageWrite<Color = [u8; 3]>>(&self, mut iw: IW) {
+    pub fn render<IW: ImageWrite>(&self, mut iw: IW) {
         let scale = 1.0 / self.sample_count as f64;
         let bounds = iw.bounds();
-        let mut buf = vec![[0, 0, 0]; bounds.0 * bounds.1];
+        let mut buf = vec![RGB::default(); bounds.0 * bounds.1];
         for y in 0..bounds.1 {
             for x in 0..bounds.0 {
                 let mut color = RGB::default();
@@ -38,11 +38,50 @@ impl<'a> Renderer<'a> {
                     color += self.ray_color(&ray, self.ray_depth);
                 }
 
-                buf[(bounds.1 - y - 1) * bounds.0 + x] = (color * scale).correct_gamma(2.0).as_bytes();
+                buf[(bounds.1 - y - 1) * bounds.0 + x] = (color * scale).correct_gamma(2.0);
             }
         }
 
-        iw.write_image_data(&buf);
+        iw.write_all(&buf);
+    }
+
+    pub fn render_multithreaded<IW: ImageWrite>(&self, mut iw: IW) {
+        let scale = 1.0 / self.sample_count as f64;
+        let bounds = iw.bounds();
+        let mut buf = vec![RGB::default(); bounds.0 * bounds.1];
+
+        let thread_count = std::thread::available_parallelism().unwrap().get();
+        let pixels_per_thread = buf.len() / (thread_count + 1);
+        let chunks = buf.chunks_mut(pixels_per_thread).collect::<Vec<&mut [RGB]>>();
+
+        std::thread::scope(|scope| {
+            for (chunk_index, chunk) in chunks.into_iter().enumerate() {
+                let offset = chunk_index * pixels_per_thread;
+                scope.spawn(move || {
+                    let mut pixel = [offset % bounds.0, offset / bounds.0];
+                    for index in 0..chunk.len() {
+                        if pixel[0] >= bounds.0 {
+                            pixel[0] = 0;
+                            pixel[1] += 1;
+                        }
+
+                        let (x, y) = (pixel[0], bounds.1 - pixel[1] - 1);
+                        let mut color = RGB::default();
+                        for _ in 0..self.sample_count {
+                            let offset = ((x as f64 + random_in_range(0.0..1.0)) / (bounds.0 as f64 - 1.0), (y as f64 + random_in_range(0.0..1.0)) / (bounds.1 as f64 - 1.0));
+                            let ray = self.camera.ray_to_viewport(&offset);
+                            color += self.ray_color(&ray, self.ray_depth);
+                        }
+
+                        chunk[index] = (color * scale).correct_gamma(2.0);
+
+                        pixel[0] += 1;
+                    }
+                });
+            }
+        });
+
+        iw.write_all(&buf);
     }
 
     fn ray_color(&self, ray: &Ray, depth: usize) -> RGB {
@@ -51,7 +90,7 @@ impl<'a> Renderer<'a> {
         }
 
         if let Some(hit_record) = self.scene.hit(&ray, 0.001, f64::MAX) {
-            if let Some((scattered_ray, color)) = hit_record.material().scatter(&ray, &hit_record) {
+            if let Some((scattered_ray, color)) = hit_record.scatter() {
                 return color * self.ray_color(&scattered_ray, depth - 1);
             }
             return RGB::default();

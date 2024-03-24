@@ -17,12 +17,14 @@ impl Lambertian {
 
 impl Scatter for Lambertian {
     fn scatter(&self, _: &Ray, hit_record: &HitRecord) -> Option<(Ray, RGB)> {
-        let mut scatter_direction = hit_record.normal() + Vec3::random_in_unit_sphere().normalize();
+        let normal = hit_record.normal();
+
+        let mut scatter_direction = normal + Vec3::random_in_unit_sphere().normalize();
         if scatter_direction.near_epsilon(1e-8) {
-            scatter_direction = hit_record.normal();
+            scatter_direction = normal;
         }
 
         let scattered_ray = Ray::new(hit_record.point(), scatter_direction);
-        Some((scattered_ray, self.albedo.clone()))
+        Some((scattered_ray, self.albedo))
     }
 }

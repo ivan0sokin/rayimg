@@ -1,3 +1,5 @@
+use crate::RGB;
+
 use super::ImageWrite;
 
 use std::io::Write;
@@ -34,10 +36,9 @@ impl<W: Write> P3ImageWriter<W> {
 }
 
 impl<W: Write> ImageWrite for P3ImageWriter<W> {
-    type Color = [u8; 3];
-
-    fn write_image_data(&mut self, data: &[Self::Color]) {
-        for color in data {
+    fn write_all(&mut self, colors: &[RGB]) {
+        for color in colors {
+            let color = color.as_bytes();
             write!(self.w, "{} {} {}\n", color[0], color[1], color[2]).unwrap();
         }
     }

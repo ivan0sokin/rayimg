@@ -1,6 +1,6 @@
 use crate::{math::Ray, hit::{Hit, HitRecord}};
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 /// Scene contains information about hittable objects. It's also hittable.
 /// ```
@@ -15,7 +15,7 @@ use std::rc::Rc;
 /// ```
 #[derive(Clone)]
 pub struct Scene<'a> {
-    objects: Vec<Rc<dyn Hit + 'a>>
+    objects: Vec<Arc<dyn Hit + 'a + Send + Sync>>
 }
 
 impl<'a> Scene<'a> {
@@ -39,8 +39,8 @@ impl<'a> Scene<'a> {
     /// test_scene.add_object(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0, Rc::new(Lambertian::new(RGB::default()))));
     /// assert_eq!(test_scene.object_count(), 1);
     /// ```
-    pub fn add_object(&mut self, object: impl Hit + 'a) {
-        self.objects.push(Rc::new(object));
+    pub fn add_object(&mut self, object: impl Hit + 'a + Send + Sync) {
+        self.objects.push(Arc::new(object));
     }
 
     /// Returns count of objects

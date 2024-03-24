@@ -3,7 +3,7 @@ use rand::{distributions::Standard, prelude::Distribution};
 use std::ops::{Add, Sub, Mul, Div, Neg, AddAssign, SubAssign, MulAssign, DivAssign};
 
 /// 3-dimensional generic vector.
-#[derive(Debug, Default, Clone, Eq, PartialEq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, PartialOrd)]
 pub struct Vec3<T> {
     pub x: T,
     pub y: T,
@@ -72,15 +72,16 @@ impl<T> Vec3<T>
     /// let (v, n) = (Vec3::new(1.0, -2.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
     /// assert_eq!(v.reflect(&n), Vec3::new(1.0, 2.0, 0.0));
     /// ```
-    pub fn reflect(&self, normal: &Vec3<T>) -> Self {
-        self.clone() - normal.clone() * (self.dot(normal) * 2.0.into())
+    pub fn reflect(&self, normal: Vec3<T>) -> Self {
+        *self - normal * (self.dot(&normal) * 2.0.into())
     }
 
     /// Returns refracted vetcor from the normal of **unit length**.
-    pub fn refract(&self, normal: &Vec3<T>, r: T) -> Self {
-        let cos_theta = (-self.clone()).dot(normal).into().into();
-        let perpendicular = (self.clone() + normal.clone() * cos_theta) * r;
-        let parallel = normal.clone() * (-(1.0 - perpendicular.squared_magnitude().into()).abs().sqrt()).into();
+    pub fn refract(&self, normal: Vec3<T>, r: T) -> Self {
+        let vec = *self;
+        let cos_theta = (-vec).dot(&normal).into().into();
+        let perpendicular = (vec + normal * cos_theta) * r;
+        let parallel = normal * (-(1.0 - perpendicular.squared_magnitude().into()).abs().sqrt()).into();
         perpendicular + parallel
     }
 }
@@ -106,7 +107,7 @@ impl<T> Vec3<T>
     /// assert_eq!(unit_vector, Vec3::new(1.0 / len, 2.0 / len, 3.0 / len));
     /// ```
     pub fn normalize(&self) -> Vec3<T> {
-        self.clone() / self.len()
+        *self / self.len()
     }
 }
 
@@ -157,6 +158,29 @@ impl<T> Vec3<T> where T: Copy + Add<Output = T> + Sub<Output = T> + Mul<Output =
             let v = Self {
                 x: random_in_range(-1.0..1.0).into(),
                 y: random_in_range(-1.0..1.0).into(),
+                z: T::default()
+            };
+
+            if v.squared_magnitude() < 1.0.into() {
+                return v;
+            }
+        }
+    }
+
+    /// Returns random `Vec3<T>` with `x` in range `-1.0..1.0` (y, z = 0.0) and length < 1.0.
+    /// ```
+    /// # use rayimg::math::Vec3;
+    /// let vector = Vec3::random_in_unit_disk();
+    /// assert!(-1.0 <= vector.x && vector.x <= 1.0);
+    /// assert_eq!(vector.y, 0.0);
+    /// assert_eq!(vector.z, 0.0);
+    /// assert!(vector.len() < 1.0);
+    /// ```
+    pub fn random_in_unit_segment() -> Self {
+        loop {
+            let v = Self {
+                x: random_in_range(-1.0..1.0).into(),
+                y: T::default(),
                 z: T::default()
             };
 

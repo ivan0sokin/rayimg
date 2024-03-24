@@ -1,6 +1,4 @@
-use crate::{math::{Vec3, Ray}, scatter::Scatter};
-
-use std::rc::Rc;
+use crate::{math::{Ray, Vec3}, RGB};
 
 /// Record of ray-object intersection.
 pub struct HitRecord {
@@ -8,7 +6,7 @@ pub struct HitRecord {
     point: Vec3<f64>,
     normal: Vec3<f64>,
     front_face: bool,
-    material: Rc<dyn Scatter>
+    scatter: Option<(Ray, RGB)>
 }
 
 impl HitRecord {
@@ -19,13 +17,13 @@ impl HitRecord {
     /// let hit_record = HitRecord::new(0.0, Vec3::new(1.0, 2.0, 3.0), Rc::new(Lambertian::new(RGB::default())));
     /// assert!(hit_record.t() == 0.0 && hit_record.point() == Vec3::new(1.0, 2.0, 3.0));
     /// ```
-    pub fn new(t: f64, point: Vec3<f64>, material: Rc<dyn Scatter>) -> Self {
+    pub fn new(t: f64, point: Vec3<f64>) -> Self {
         Self {
             t,
             point,
             normal: Vec3::default(),
             front_face: bool::default(),
-            material
+            scatter: None
         }
     }
 
@@ -57,6 +55,15 @@ impl HitRecord {
         self.normal = if self.front_face { normal } else { -normal };
     }
 
+    pub fn set_scatter(&mut self, scatter: (Ray, RGB)) {
+        self.scatter = Some(scatter);
+    }
+
+    /// Get scattering result
+    pub fn scatter(&self) -> Option<(Ray, RGB)> {
+        self.scatter.clone()
+    }
+
     /// Returns normal of hit surface
     /// ```
     /// # use rayimg::{HitRecord, math::{Vec3, Ray}, materials::Lambertian, RGB};
@@ -72,10 +79,5 @@ impl HitRecord {
     /// Returns true if normal points outwards.
     pub fn front_face(&self) -> bool {
         self.front_face
-    }
-
-    /// Returns material of `Hit` object.
-    pub fn material(&self) -> Rc<dyn Scatter> {
-        self.material.clone()
     }
 }
