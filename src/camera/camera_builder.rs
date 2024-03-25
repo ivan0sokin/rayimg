@@ -6,9 +6,8 @@ pub struct CameraBuilder {
     pub(super) target: Vec3<f64>,
     pub(super) up: Vec3<f64>,
     pub(super) vertical_fov: f64,
-    pub(super) viewport_height: f64,
     pub(super) aspect_ratio: f64,
-    pub(super) aperture: f64,
+    pub(super) defocus_angle: f64,
     pub(super) focus_distance: f64
 }
 
@@ -37,24 +36,19 @@ impl CameraBuilder {
         self
     }
 
-    /// Sets `Camera` viewport height.
-    pub fn viewport_height(mut self, viewport_height: f64) -> Self {
-        self.viewport_height = viewport_height;
-        self
-    }
-
     /// Sets `Camera` viewport aspect_ratio.
     pub fn aspect_ratio(mut self, aspect_ratio: f64) -> Self {
         self.aspect_ratio = aspect_ratio;
         self
     }
 
-    /// Sets `Camera` lens.
-    pub fn aperture(mut self, aperture: f64) -> Self {
-        self.aperture = aperture;
+    /// Sets `Camera` defocus angle in **degrees**.
+    pub fn defocus_angle(mut self, defocus_angle: f64) -> Self {
+        self.defocus_angle = defocus_angle;
         self
     }
 
+    /// Sets `Camera` focus distance;
     pub fn focus_distance(mut self, focus_distance: f64) -> Self {
         self.focus_distance = focus_distance;
         self
@@ -63,20 +57,22 @@ impl CameraBuilder {
     /// Returns built `Camera`.
     pub fn build(self) -> Camera {
         let h = (self.vertical_fov * 0.5).to_radians().tan();
-        let height = self.viewport_height * h;
+        let height = 2.0 * h * self.focus_distance;
         let width = self.aspect_ratio * height;
 
-        let w = (self.position.clone() - self.target).normalize();
+        let w = (self.position - self.target).normalize();
         let u = self.up.cross(&w).normalize();
         let v = w.cross(&u);
-        let (horizontal, vertical) = (u.clone() * width * self.focus_distance, v.clone() * height * self.focus_distance);
+        let (horizontal, vertical) = (u * width, v * height);
+
+        let defocus_radius = (self.defocus_angle * 0.5).to_radians().tan() * self.focus_distance;
 
         Camera {
-            position: self.position.clone(),
-            lower_left_corner: self.position - horizontal.clone() * 0.5 - vertical.clone() * 0.5 - w * self.focus_distance,
+            position: self.position,
+            upper_left_corner: self.position - horizontal * 0.5 + vertical * 0.5 - w * self.focus_distance,
             horizontal,
-            vertical,
-            lens: Lens::new(self.aperture * 0.5, u, v)
+            minus_vertical: -vertical,
+            lens: Lens::new(u * defocus_radius, v * defocus_radius)
         }
     }
 }

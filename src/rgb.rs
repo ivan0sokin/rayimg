@@ -56,7 +56,7 @@ impl RGB {
         self.2
     }
 
-    /// Corrects color based on gamma value, i.e. raises each component to the power camera/gamma.
+    /// Corrects color based on gamma value, i.e. raises each component to the power 1/gamma.
     /// ```
     /// # use rayimg::RGB;
     /// let some_color = RGB(0.01, 0.25, 0.64);

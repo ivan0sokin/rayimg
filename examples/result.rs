@@ -51,17 +51,15 @@ fn main() {
     scene.add_object(Sphere::new(Vec3::new(4.0, 1.0, 0.0), 1.0, material3));
 
     let camera = Camera::new().aspect_ratio(16.0 / 9.0)
-                              .viewport_height(2.0)
                               .vertical_fov(20.0)
                               .position(Vec3::new(13.0, 2.0, 3.0))
                               .target(Vec3::new(0.0, 0.0, 0.0))
                               .up(Vec3::new(0.0, 1.0, 0.0))
                               .focus_distance(10.0)
-                              .aperture(0.0)
                               .build();
     
     let renderer = Renderer::new(scene, camera).ray_depth(50)
-                                               .sample_count(500)
+                                               .sample_count(100)
                                                .ray_miss(|r| {
                                                 let unit_direction = r.direction().normalize();
                                                 let t = 0.5 * (unit_direction.y + 1.0);
@@ -70,5 +68,5 @@ fn main() {
                                                .build();
 
     let file = std::fs::File::create("examples/output/result/result.ppm").expect("Failed to create test file");
-    renderer.render_multithreaded(P3ImageWriter::new((1920, 1080), file));
+    renderer.render_multithreaded(P3ImageWriter::new((1280, 720), file));
 }

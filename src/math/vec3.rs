@@ -70,7 +70,7 @@ impl<T> Vec3<T>
     /// ```
     /// # use rayimg::math::Vec3;
     /// let (v, n) = (Vec3::new(1.0, -2.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
-    /// assert_eq!(v.reflect(&n), Vec3::new(1.0, 2.0, 0.0));
+    /// assert_eq!(v.reflect(n), Vec3::new(1.0, 2.0, 0.0));
     /// ```
     pub fn reflect(&self, normal: Vec3<T>) -> Self {
         *self - normal * (self.dot(&normal) * 2.0.into())
@@ -170,7 +170,7 @@ impl<T> Vec3<T> where T: Copy + Add<Output = T> + Sub<Output = T> + Mul<Output =
     /// Returns random `Vec3<T>` with `x` in range `-1.0..1.0` (y, z = 0.0) and length < 1.0.
     /// ```
     /// # use rayimg::math::Vec3;
-    /// let vector = Vec3::random_in_unit_disk();
+    /// let vector = Vec3::random_in_unit_segment();
     /// assert!(-1.0 <= vector.x && vector.x <= 1.0);
     /// assert_eq!(vector.y, 0.0);
     /// assert_eq!(vector.z, 0.0);

@@ -29,7 +29,7 @@ fn main() {
         })
         .build();
 
-    renderer.render(P3ImageWriter::new((400, 225), std::fs::File::create("examples/output/distant_view/distant_view.ppm").expect("Failed to create output file")));
+    renderer.render(P3ImageWriter::new((1280, 720), std::fs::File::create("examples/output/distant_view/distant_view.ppm").expect("Failed to create output file")));
 }
 
 fn user_position(args: &[String]) -> Option<Vec3<f64>> {

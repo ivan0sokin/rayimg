@@ -8,8 +8,6 @@ fn main() {
     scene.add_object(red_sphere);
     scene.add_object(blue_sphere);
 
-
-
     let args = std::env::args().skip(1).collect::<Vec<String>>();
     let mut depths = user_ray_depths(&args);
     if !args.contains(&"--only".into()) {
@@ -26,7 +24,7 @@ fn main() {
             .ray_depth(ray_depth)
             .build();
 
-        renderer.render(P3ImageWriter::new((400, 225), std::fs::File::create(format!("examples/output/ray_depth/ray_depth_{}.ppm", ray_depth)).expect("Failed to create output file")));
+        renderer.render_multithreaded(P3ImageWriter::new((1280, 720), std::fs::File::create(format!("examples/output/ray_depth/ray_depth_{}.ppm", ray_depth)).expect("Failed to create output file")));
     }    
 }
 

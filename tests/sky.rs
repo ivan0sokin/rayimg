@@ -12,5 +12,5 @@ fn create_sky_image() {
         )
         .build();
     let output_file = std::fs::File::create("tests/output/sky.ppm").expect("Failed to create test file");
-    renderer.render(&mut P3ImageWriter::new(BOUNDS, output_file));
+    renderer.render_multithreaded(&mut P3ImageWriter::new(BOUNDS, output_file));
 }

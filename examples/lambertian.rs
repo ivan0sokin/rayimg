@@ -20,5 +20,5 @@ fn main() {
         })
         .build();
 
-    renderer.render(P3ImageWriter::new((400, 225), std::fs::File::create("examples/output/lambertian/lambertian.ppm").expect("Failed to create output file")));
+    renderer.render_multithreaded(P3ImageWriter::new((1280, 720), std::fs::File::create("examples/output/lambertian/lambertian.ppm").expect("Failed to create output file")));
 }

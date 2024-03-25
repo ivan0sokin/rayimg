@@ -18,5 +18,5 @@ fn cyan_on_lime() {
         .build();
 
     let output_file = std::fs::File::create("tests/output/cyan_over_lime.ppm").expect("Failed to create test file");
-    renderer.render(&mut P3ImageWriter::new(BOUNDS, output_file));
+    renderer.render_multithreaded(&mut P3ImageWriter::new(BOUNDS, output_file));
 }

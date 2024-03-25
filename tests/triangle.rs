@@ -25,5 +25,5 @@ fn triangle() {
         .build();
     
     let output_file = std::fs::File::create("tests/output/triangle.ppm").expect("Failed to create test file");
-    renderer.render(P3ImageWriter::new(BOUNDS, output_file));
+    renderer.render_multithreaded(P3ImageWriter::new(BOUNDS, output_file));
 }

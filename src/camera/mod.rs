@@ -1,7 +1,7 @@
 mod camera_builder;
 mod lens;
 
-use {crate::math::{Vec3, Ray}};
+use crate::math::{Ray, Vec3};
 use camera_builder::CameraBuilder;
 use lens::Lens;
 
@@ -9,9 +9,9 @@ use lens::Lens;
 #[derive(Clone)]
 pub struct Camera {
     pub(super) position: Vec3<f64>,
-    pub(super) lower_left_corner: Vec3<f64>,
+    pub(super) upper_left_corner: Vec3<f64>,
     pub(super) horizontal: Vec3<f64>,
-    pub(super) vertical: Vec3<f64>,
+    pub(super) minus_vertical: Vec3<f64>,
     pub(super) lens: Lens
 }
 
@@ -23,9 +23,8 @@ impl Camera {
             target: Vec3::new(0.0, 0.0, -1.0),
             up: Vec3::new(0.0, 1.0, 0.0),
             vertical_fov: 90.0,
-            viewport_height: 2.0,
             aspect_ratio: 16.0 / 9.0,
-            aperture: 0.0,
+            defocus_angle: 0.0,
             focus_distance: 1.0
         }
     }
@@ -33,7 +32,13 @@ impl Camera {
     /// Returns ray to camera viewport with some offset in interval `0.0..=1.0`.
     pub fn ray_to_viewport(&self, offset: &(f64, f64)) -> Ray {
         let lens_offset = self.lens.random_offset();
-        Ray::new(self.position.clone() + lens_offset.clone(), self.lower_left_corner.clone() + self.horizontal.clone() * offset.0 + self.vertical.clone() * offset.1 - self.position.clone() - lens_offset)
+        
+        let point = self.upper_left_corner + self.horizontal * offset.0 + self.minus_vertical * offset.1;
+
+        let origin = self.position + lens_offset;
+        let direction = point - origin;
+
+        Ray::new(origin, direction)
     }
 }
 

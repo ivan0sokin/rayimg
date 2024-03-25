@@ -15,9 +15,9 @@ fn main() {
     scene.add_object(cyan_sphere);
 
     let camera = Camera::new()
-        .position(Vec3::new(3.0, 3.0, 2.0))
-        .aperture(user_aperture(&std::env::args().collect::<Vec<String>>()).unwrap_or(2.0)) // 0.0 aperture by default and everything in focus
-        .focus_distance((Vec3::new(0.0, 0.0, -1.0) - Vec3::new(3.0, 3.0, 2.0)).len())
+        .position(Vec3::new(-2.0, 2.0, 1.0))
+        .defocus_angle(user_aperture(&std::env::args().collect::<Vec<String>>()).unwrap_or(10.0)) // 0.0 aperture by default and everything in focus
+        .focus_distance(3.4)
         .vertical_fov(20.0)
         .build();
 
@@ -27,9 +27,10 @@ fn main() {
             let t = 0.5 * (unit_direction.y + 1.0);
             (Vec3::new(1.0, 1.0, 1.0) * (1.0 - t) + Vec3::new(0.5, 0.7, 1.0) * t).into()
         })
+        .sample_count(100)
         .build();
 
-    renderer.render(P3ImageWriter::new((400, 225), std::fs::File::create("examples/output/lens/lens.ppm").expect("Failed to create output file")));
+    renderer.render_multithreaded(P3ImageWriter::new((1920, 1080), std::fs::File::create("examples/output/lens/lens.ppm").expect("Failed to create output file")));
 }
 
 fn user_aperture(args: &[String]) -> Option<f64> {

@@ -5,10 +5,9 @@ use std::sync::Arc;
 /// Scene contains information about hittable objects. It's also hittable.
 /// ```
 /// use rayimg::{Scene, shapes::Sphere, materials::Lambertian, math::{Vec3, Ray}, RGB, Hit, HitRecord};
-/// use std::rc::Rc;
 ///
 /// let mut scene = Scene::new();
-/// scene.add_object(Sphere::new(Vec3::new(1.0, 2.0, 3.0), 1.0, Rc::new(Lambertian::new(RGB(1.0, 0.0, 0.0)))));
+/// scene.add_object(Sphere::new(Vec3::new(1.0, 2.0, 3.0), 1.0, Lambertian::new(RGB(1.0, 0.0, 0.0))));
 ///
 /// assert_eq!(scene.object_count(), 1);
 /// assert!(scene.hit(&Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, -1.0)), 0.0, f64::MAX).is_none());
@@ -34,9 +33,8 @@ impl<'a> Scene<'a> {
     /// Adds object to scene
     /// ```
     /// # use rayimg::{Scene, shapes::Sphere, math::Vec3, materials::Lambertian, RGB};
-    /// # use std::rc::Rc;
     /// let mut test_scene = Scene::new();
-    /// test_scene.add_object(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0, Rc::new(Lambertian::new(RGB::default()))));
+    /// test_scene.add_object(Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0, Lambertian::new(RGB::default())));
     /// assert_eq!(test_scene.object_count(), 1);
     /// ```
     pub fn add_object(&mut self, object: impl Hit + 'a + Send + Sync) {
@@ -46,9 +44,8 @@ impl<'a> Scene<'a> {
     /// Returns count of objects
     /// ```
     /// # use rayimg::{Scene, shapes::Sphere, math::Vec3, materials::Lambertian, RGB};
-    /// # use std::rc::Rc;
     /// let mut test_scene = Scene::new();
-    /// let unit_sphere = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0, Rc::new(Lambertian::new(RGB::default())));
+    /// let unit_sphere = Sphere::new(Vec3::new(0.0, 0.0, 0.0), 1.0, Lambertian::new(RGB::default()));
     /// test_scene.add_object(unit_sphere.clone());
     /// test_scene.add_object(unit_sphere.clone());
     /// test_scene.add_object(unit_sphere.clone());

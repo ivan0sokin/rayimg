@@ -17,7 +17,7 @@ impl<W: Write> P3ImageWriter<W> {
     /// # use std::io::Write;
     /// let mut buf = Vec::new();
     /// let mut image_writer = P3ImageWriter::new((640, 480), &mut buf);
-    /// image_writer.write_image_data(&[[0, 128, 255]]);
+    /// image_writer.write_all(&[RGB::new(0.0, 0.5, 1.0)]);
     /// assert_eq!(String::from_utf8(buf).unwrap(), String::from("P3\n640 480\n255\n0 128 255\n"));
     /// ```
     pub fn new(bounds: (usize, usize), w: W) -> Self {

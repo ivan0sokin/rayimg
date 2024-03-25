@@ -24,7 +24,7 @@ impl<'a> Renderer<'a> {
         }
     }
 
-    /// Renders image to `ImageWrite<[u8; 3]>` buffer.
+    /// Renders image to `ImageWrite` buffer.
     pub fn render<IW: ImageWrite>(&self, mut iw: IW) {
         let scale = 1.0 / self.sample_count as f64;
         let bounds = iw.bounds();
@@ -45,6 +45,7 @@ impl<'a> Renderer<'a> {
         iw.write_all(&buf);
     }
 
+    /// Renders image to `ImageWrite` buffer multithreaded using all threads.
     pub fn render_multithreaded<IW: ImageWrite>(&self, mut iw: IW) {
         let scale = 1.0 / self.sample_count as f64;
         let bounds = iw.bounds();
@@ -65,11 +66,11 @@ impl<'a> Renderer<'a> {
                             pixel[1] += 1;
                         }
 
-                        let (x, y) = (pixel[0], bounds.1 - pixel[1] - 1);
                         let mut color = RGB::default();
                         for _ in 0..self.sample_count {
-                            let offset = ((x as f64 + random_in_range(0.0..1.0)) / (bounds.0 as f64 - 1.0), (y as f64 + random_in_range(0.0..1.0)) / (bounds.1 as f64 - 1.0));
-                            let ray = self.camera.ray_to_viewport(&offset);
+                            let offset_x = (pixel[0] as f64 + random_in_range(0.0..1.0) - 0.5) / (bounds.0 as f64 - 1.0);
+                            let offset_y = (pixel[1] as f64 + random_in_range(0.0..1.0) - 0.5) / (bounds.1 as f64 - 1.0);
+                            let ray = self.camera.ray_to_viewport(&(offset_x, offset_y));
                             color += self.ray_color(&ray, self.ray_depth);
                         }
 

@@ -13,8 +13,7 @@ impl HitRecord {
     /// Creates new `HitRecord`.
     /// ```
     /// # use rayimg::{HitRecord, math::Vec3, materials::Lambertian, RGB};
-    /// # use std::rc::Rc;
-    /// let hit_record = HitRecord::new(0.0, Vec3::new(1.0, 2.0, 3.0), Rc::new(Lambertian::new(RGB::default())));
+    /// let hit_record = HitRecord::new(0.0, Vec3::new(1.0, 2.0, 3.0));
     /// assert!(hit_record.t() == 0.0 && hit_record.point() == Vec3::new(1.0, 2.0, 3.0));
     /// ```
     pub fn new(t: f64, point: Vec3<f64>) -> Self {
@@ -30,8 +29,7 @@ impl HitRecord {
     /// Returns multiplier `t` of hit record.
     /// ```
     /// # use rayimg::{HitRecord, math::Vec3, materials::Lambertian, RGB};
-    /// # use std::rc::Rc;
-    /// let hit_record = HitRecord::new(5.7, Vec3::new(-4.0, 2.0, 3.0), Rc::new(Lambertian::new(RGB::default())));
+    /// let hit_record = HitRecord::new(5.7, Vec3::new(-4.0, 2.0, 3.0));
     /// assert_eq!(hit_record.t(), 5.7);
     /// ```
     pub fn t(&self) -> f64 {
@@ -41,8 +39,7 @@ impl HitRecord {
     /// Returns point of hit.
     /// ```
     /// # use rayimg::{HitRecord, math::Vec3, materials::Lambertian, RGB};
-    /// # use std::rc::Rc;
-    /// let hit_record = HitRecord::new(5.7, Vec3::new(-4.0, 2.0, 3.0), Rc::new(Lambertian::new(RGB::default())));
+    /// let hit_record = HitRecord::new(5.7, Vec3::new(-4.0, 2.0, 3.0));
     /// assert_eq!(hit_record.point(), Vec3::new(-4.0, 2.0, 3.0));
     /// ```
     pub fn point(&self) -> Vec3<f64> {
@@ -67,8 +64,7 @@ impl HitRecord {
     /// Returns normal of hit surface
     /// ```
     /// # use rayimg::{HitRecord, math::{Vec3, Ray}, materials::Lambertian, RGB};
-    /// # use std::rc::Rc;
-    /// let mut hit_record = HitRecord::new(5.7, Vec3::new(-4.0, 2.0, 3.0), Rc::new(Lambertian::new(RGB::default())));
+    /// let mut hit_record = HitRecord::new(5.7, Vec3::new(-4.0, 2.0, 3.0));
     /// hit_record.set_face_normal(&Ray::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 0.0, 1.0)), Vec3::new(0.0, 0.0, -1.0));
     /// assert_eq!(hit_record.normal(), Vec3::new(0.0, 0.0, -1.0));
     /// ```

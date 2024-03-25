@@ -24,7 +24,7 @@ fn main() {
             .sample_count(sample_count)
             .build();
 
-        renderer.render(P3ImageWriter::new((400, 225), std::fs::File::create(format!("examples/output/multisampling/{}_sample_per_pixel.ppm", sample_count)).expect("Failed to create output file")));
+        renderer.render_multithreaded(P3ImageWriter::new((1280, 720), std::fs::File::create(format!("examples/output/multisampling/{}_sample_per_pixel.ppm", sample_count)).expect("Failed to create output file")));
     }
 }
 

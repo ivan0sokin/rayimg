@@ -37,7 +37,7 @@ fn main() {
             .sample_count(100)
             .build();
 
-        renderer.render_multithreaded(P3ImageWriter::new((400, 225), std::fs::File::create(format!("examples/output/changeable_fov/fov_{:.0}.ppm", fov)).expect("Failed to create output file")));
+        renderer.render_multithreaded(P3ImageWriter::new((1280, 720), std::fs::File::create(format!("examples/output/changeable_fov/fov_{:.0}.ppm", fov)).expect("Failed to create output file")));
     }
 }
 

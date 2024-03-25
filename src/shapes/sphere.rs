@@ -17,7 +17,7 @@ impl<'a> Sphere<'a> {
     /// ```
     /// # use rayimg::{shapes::Sphere, math::Vec3, materials::Lambertian, RGB};
     /// # use std::rc::Rc;
-    /// let unit_sphere = Sphere::new(Vec3::new(1.0, 3.0, 2.0), 1.0, Rc::new(Lambertian::new(RGB::default())));
+    /// let unit_sphere = Sphere::new(Vec3::new(1.0, 3.0, 2.0), 1.0, Lambertian::new(RGB::default()));
     /// assert!(unit_sphere.center() == Vec3::new(1.0, 3.0, 2.0) && unit_sphere.radius() == 1.0);
     /// ```
     pub fn new(center: Vec3<f64>, radius: f64, material: impl Scatter + 'a + Send + Sync) -> Self {
@@ -33,7 +33,7 @@ impl<'a> Sphere<'a> {
     /// ```
     /// # use rayimg::{shapes::Sphere, math::Vec3, materials::Lambertian, RGB};
     /// # use std::rc::Rc;
-    /// let unit_sphere = Sphere::new(Vec3::new(4.0, -3.0, 1.0), 1.0, Rc::new(Lambertian::new(RGB::default())));
+    /// let unit_sphere = Sphere::new(Vec3::new(4.0, -3.0, 1.0), 1.0, Lambertian::new(RGB::default()));
     /// assert_eq!(unit_sphere.center(), Vec3::new(4.0, -3.0, 1.0));
     /// ```
     pub fn center(&self) -> Vec3<f64> {
@@ -44,7 +44,7 @@ impl<'a> Sphere<'a> {
     /// ```
     /// # use rayimg::{shapes::Sphere, math::Vec3, materials::Lambertian, RGB};
     /// # use std::rc::Rc;
-    /// let unit_sphere = Sphere::new(Vec3::new(4.0, -3.0, 1.0), 1.0, Rc::new(Lambertian::new(RGB::default())));
+    /// let unit_sphere = Sphere::new(Vec3::new(4.0, -3.0, 1.0), 1.0, Lambertian::new(RGB::default()));
     /// assert_eq!(unit_sphere.radius(), 1.0);
     /// ```
     pub fn radius(&self) -> f64 {
