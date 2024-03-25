@@ -1,11 +1,11 @@
 mod renderer_builder;
 
-use crate::{scene::Scene, image_write::ImageWrite, rgb::RGB, camera::Camera, math::Ray, hit::Hit, random::random_in_range};
+use crate::{image_write::ImageWrite, rgb::RGB, camera::Camera, math::Ray, hit::Hit, random::random_in_range};
 use renderer_builder::RendererBuilder;
 
 /// Renders scene to some image (or buffer).
 pub struct Renderer<'a> {
-    pub(super) scene: Scene<'a>,
+    pub(super) hittable: Box<dyn Hit + 'a + Sync>,
     pub(super) camera: Camera,
     pub(super) sample_count: usize,
     pub(super) ray_depth: usize,
@@ -14,9 +14,9 @@ pub struct Renderer<'a> {
 
 impl<'a> Renderer<'a> {
     /// Returns new `RendererBuilder`.
-    pub fn new(scene: Scene<'a>, camera: Camera) -> RendererBuilder {
+    pub fn new(hittable: impl Hit + 'a + Send + Sync, camera: Camera) -> RendererBuilder<'a> {
         RendererBuilder {
-            scene,
+            hittable: Box::new(hittable),
             camera,
             sample_count: 100,
             ray_depth: 50,
@@ -90,7 +90,7 @@ impl<'a> Renderer<'a> {
             return RGB::default();
         }
 
-        if let Some(hit_record) = self.scene.hit(&ray, 0.001, f64::MAX) {
+        if let Some(hit_record) = self.hittable.hit(&ray, 0.001, f64::MAX) {
             if let Some((scattered_ray, color)) = hit_record.scatter() {
                 return color * self.ray_color(&scattered_ray, depth - 1);
             }

@@ -1,6 +1,6 @@
 use crate::{rgb::RGB, random::random_in_range};
 use rand::{distributions::Standard, prelude::Distribution};
-use std::ops::{Add, Sub, Mul, Div, Neg, AddAssign, SubAssign, MulAssign, DivAssign};
+use std::ops::{Add, AddAssign, Div, DivAssign, Index, Mul, MulAssign, Neg, Sub, SubAssign};
 
 /// 3-dimensional generic vector.
 #[derive(Debug, Default, Clone, Copy, PartialEq, PartialOrd)]
@@ -187,6 +187,18 @@ impl<T> Vec3<T> where T: Copy + Add<Output = T> + Sub<Output = T> + Mul<Output =
             if v.squared_magnitude() < 1.0.into() {
                 return v;
             }
+        }
+    }
+}
+
+impl<T> Index<usize> for Vec3<T> {
+    type Output = T;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        match index {
+            0 => &self.x,
+            1 => &self.y,
+            _ => &self.z
         }
     }
 }

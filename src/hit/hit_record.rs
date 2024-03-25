@@ -1,6 +1,7 @@
 use crate::{math::{Ray, Vec3}, RGB};
 
 /// Record of ray-object intersection.
+#[derive(Debug, Clone, Copy)]
 pub struct HitRecord {
     t: f64,
     point: Vec3<f64>,

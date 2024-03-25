@@ -1,4 +1,4 @@
-use crate::{math::{Vec3, Ray}, Hit, HitRecord, Scatter};
+use crate::{math::{Ray, Vec3}, Hit, HitRecord, Scatter, AABB};
 
 use std::sync::Arc;
 
@@ -57,5 +57,9 @@ impl<'a> Hit for Triangle<'a> {
         }
         
         Some(hit_record)
+    }
+
+    fn bounding(&self) -> AABB {
+        todo!()
     }
 }

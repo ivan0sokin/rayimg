@@ -1,4 +1,4 @@
-use crate::{hit::{Hit, HitRecord}, math::{Vec3, Ray}, scatter::Scatter};
+use crate::{hit::{Hit, HitRecord}, math::{Ray, Vec3}, scatter::Scatter, AABB};
 
 use std::sync::Arc;
 
@@ -9,6 +9,7 @@ pub struct Sphere<'a> {
     center: Vec3<f64>,
     radius: f64,
     radius_squared: f64,
+    aabb: AABB,
     material: Arc<dyn Scatter + 'a + Send + Sync>
 }
 
@@ -21,10 +22,13 @@ impl<'a> Sphere<'a> {
     /// assert!(unit_sphere.center() == Vec3::new(1.0, 3.0, 2.0) && unit_sphere.radius() == 1.0);
     /// ```
     pub fn new(center: Vec3<f64>, radius: f64, material: impl Scatter + 'a + Send + Sync) -> Self {
+        let radius_vector = Vec3::new(radius, radius, radius);
+
         Self {
             center,
             radius,
             radius_squared: radius * radius,
+            aabb: AABB::from_two_points(center - radius_vector, center + radius_vector),
             material: Arc::new(material)
         }
     }
@@ -85,5 +89,9 @@ impl<'a> Hit for Sphere<'a> {
         }
 
         Some(hit_record)
+    }
+
+    fn bounding(&self) -> AABB {
+        self.aabb
     }
 }

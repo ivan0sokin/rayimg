@@ -2,7 +2,9 @@
 
 mod scene;
 mod hit;
+mod bound;
 mod scatter;
+mod bvh;
 
 /// Simple materials which scatter light.
 pub mod materials;
@@ -23,6 +25,8 @@ mod random;
 pub use {camera::Camera,
          image_write::{ImageWrite, P3ImageWriter},
          hit::{Hit, HitRecord},
+         bound::{Interval, AABB},
+         bvh::BVHNode,
          scatter::Scatter,
          renderer::Renderer,
          rgb::RGB,

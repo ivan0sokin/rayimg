@@ -1,9 +1,9 @@
 use super::Renderer;
-use crate::{rgb::RGB, math::Ray, scene::Scene, camera::Camera};
+use crate::{camera::Camera, math::Ray, rgb::RGB, Hit};
 
 /// `RendererBuilder` builds a renderer with set parameters.
 pub struct RendererBuilder<'a> {
-    pub(super) scene: Scene<'a>,
+    pub(super) hittable: Box<dyn Hit + 'a + Sync>,
     pub(super) camera: Camera,
     pub(super) sample_count: usize,
     pub(super) ray_depth: usize,
@@ -32,7 +32,7 @@ impl<'a> RendererBuilder<'a> {
     /// Returns built `Renderer`.
     pub fn build(self) -> Renderer<'a> {
         Renderer {
-            scene: self.scene,
+            hittable: self.hittable,
             camera: self.camera,
             sample_count: self.sample_count,
             ray_depth: self.ray_depth,

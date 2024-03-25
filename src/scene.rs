@@ -1,4 +1,4 @@
-use crate::{math::Ray, hit::{Hit, HitRecord}};
+use crate::{hit::{Hit, HitRecord}, math::Ray, AABB};
 
 use std::sync::Arc;
 
@@ -14,7 +14,8 @@ use std::sync::Arc;
 /// ```
 #[derive(Clone)]
 pub struct Scene<'a> {
-    objects: Vec<Arc<dyn Hit + 'a + Send + Sync>>
+    objects: Vec<Arc<dyn Hit + 'a + Send + Sync>>,
+    aabb: Option<AABB>
 }
 
 impl<'a> Scene<'a> {
@@ -26,7 +27,8 @@ impl<'a> Scene<'a> {
     /// ```
     pub fn new() -> Self {
         Self {
-            objects: Vec::new()
+            objects: Vec::new(),
+            aabb: None
         }
     }
 
@@ -39,6 +41,9 @@ impl<'a> Scene<'a> {
     /// ```
     pub fn add_object(&mut self, object: impl Hit + 'a + Send + Sync) {
         self.objects.push(Arc::new(object));
+        if let Some(aabb) = self.aabb {
+            self.aabb = Some(AABB::unite(aabb, self.objects.last().unwrap().bounding()))
+        }
     }
 
     /// Returns count of objects
@@ -53,6 +58,10 @@ impl<'a> Scene<'a> {
     /// ```
     pub fn object_count(&self) -> usize {
         self.objects.len()
+    }
+
+    pub fn objects(&self) -> Vec<Arc<dyn Hit + 'a + Send + Sync>> {
+        self.objects.clone()
     }
 }
 
@@ -69,5 +78,9 @@ impl<'a> Hit for Scene<'a> {
         }
         
         hit_record
+    }
+
+    fn bounding(&self) -> AABB {
+        self.aabb.unwrap_or_default()
     }
 }
